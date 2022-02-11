@@ -24,8 +24,8 @@ function Mint() {
       const id = file.name;
       console.log(file);
       setFilesInfo((oldState) => {
-        oldState[id] = { progress: 0, file: file };
-        return oldState;
+        const clone = { ...oldState, [id]: { progress: 0, file } };
+        return clone;
       });
     }
   };
@@ -53,8 +53,8 @@ function Mint() {
       xhr.upload.addEventListener('progress', (e) => {
         const progress = Math.round((e.loaded * 100.0) / e.total);
         setFilesInfo((oldState: any) => {
-          oldState[id] = { progress: progress };
-          return oldState;
+          const clone = { ...oldState, [id]: { ...oldState[id], progress } };
+          return clone;
         });
       });
 
@@ -68,8 +68,15 @@ function Mint() {
           }
           console.log(value);
           setFilesInfo((oldState: any) => {
-            oldState[id] = { imgSrc: `${cloudflareGateway}/${value.cid}` };
-            return oldState;
+            const clone = {
+              ...oldState,
+              [id]: {
+                ...oldState[id],
+                imgSrc: `${cloudflareGateway}/${value.cid}`,
+              },
+            };
+
+            return clone;
           });
           resolve(value.cid);
         }
@@ -84,7 +91,6 @@ function Mint() {
       <h1 className="text-2xl m-4">Mint NFTs</h1>
       <div className="flex items-center justify-center space-x-4">
         {Object.keys(filesInfo).map((val) => {
-          console.log(val);
           return (
             <form
               className="flex items-center justify-center space-x-4"
