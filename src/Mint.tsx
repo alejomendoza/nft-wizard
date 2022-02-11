@@ -99,7 +99,7 @@ function Mint() {
                   !filesInfo[val].file ? 'bg-indigo-400' : 'bg-indigo-600'
                 } group relative w-auto flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white  hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
               >
-                Mint NFT
+                {filesInfo[val].file ? 'Upload NFT' : 'Mint NFT'}
               </button>
             </form>
           );
