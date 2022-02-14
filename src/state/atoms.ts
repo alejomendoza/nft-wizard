@@ -60,7 +60,7 @@ export const fileAtom = atom({
 }) as RecoilState<any>;
 
 interface FilesInfo {
-  [key: string]: { progress: number; imgSrc?: string; file: any };
+  [key: string]: { progress: number; imgSrc?: string; file: any; cid?: string };
 }
 
 export const filesInfoAtom = atom({

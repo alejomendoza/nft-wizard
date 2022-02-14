@@ -73,6 +73,7 @@ function Mint() {
               [id]: {
                 ...oldState[id],
                 imgSrc: `${cloudflareGateway}/${value.cid}`,
+                cid: value.cid,
               },
             };
 
@@ -86,6 +87,8 @@ function Mint() {
     });
   };
 
+  const mintFile = () => {};
+
   return (
     <div>
       <h1 className="text-2xl m-4">Mint NFTs</h1>
@@ -94,9 +97,12 @@ function Mint() {
           return (
             <form
               className="flex items-center justify-center space-x-4"
-              onSubmit={handleSubmit(() =>
-                uploadFile(filesInfo[val].file, val)
-              )}
+              onSubmit={handleSubmit(() => {
+                if (filesInfo[val].cid) {
+                  return mintFile();
+                }
+                uploadFile(filesInfo[val].file, val);
+              })}
             >
               <button
                 type="submit"
