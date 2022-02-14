@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { fileAtom, filesInfoAtom, uploadingErrorAtom } from './state/atoms';
+import { fileAtom, uploadingErrorAtom } from './state/atoms';
 import { useForm } from 'react-hook-form';
+import { createNFT } from './stellar';
 
 const cloudflareGateway = 'https://cloudflare-ipfs.com/ipfs';
 const nftStorageApi = 'https://api.nft.storage';
@@ -11,40 +12,21 @@ function Mint() {
   const [uploadingError, setUploadingError] =
     useRecoilState(uploadingErrorAtom);
 
-  const [filesInfo, setFilesInfo] = useRecoilState(filesInfoAtom);
+  const [fileInfo, setFileInfo] = useRecoilState(fileAtom);
+  const [progress, setProgress] = useState(0);
   const { handleSubmit } = useForm();
 
-  const dropFile = async (e: any) => {
+  const dropFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    dragClass(e);
-    const file = e.target.files
-      ? e.target.files[0]
-      : e.dataTransfer.items[0].getAsFile();
-    if (file?.type === 'image/png') {
-      const id = file.name;
-      console.log(file);
-      setFilesInfo((oldState) => {
-        const clone = { ...oldState, [id]: { progress: 0, file } };
-        return clone;
-      });
+    const file = e.target.files?.[0];
+
+    if (file && file.type === 'image/png') {
+      setFileInfo((oldState) => ({ ...oldState, file }));
     }
   };
 
-  const dragClass = (e: any) => {
-    e.preventDefault();
-    if (e.type == 'dragover') {
-      e.target.classList.add('dragging');
-    } else {
-      e.target.classList.remove('dragging');
-    }
-  };
-
-  const uploadFile = (file: any, id: string) => {
+  const uploadFile = () => {
     return new Promise((resolve: (value: string) => void, reject) => {
-      setFilesInfo((oldState: any) => {
-        oldState[id] = { progress: 0 };
-        return oldState;
-      });
       let xhr = new XMLHttpRequest();
       xhr.open('POST', `${nftStorageApi}/upload`, true);
       xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -52,77 +34,40 @@ function Mint() {
 
       xhr.upload.addEventListener('progress', (e) => {
         const progress = Math.round((e.loaded * 100.0) / e.total);
-        setFilesInfo((oldState: any) => {
-          const clone = { ...oldState, [id]: { ...oldState[id], progress } };
-          return clone;
-        });
+        setProgress(progress);
       });
 
       xhr.onreadystatechange = () => {
         if (xhr.readyState == 4 && xhr.status == 200) {
           let { value, ok } = JSON.parse(xhr.responseText);
+
           if (!ok) {
             setUploadingError('Something went wrong!');
             reject();
             return;
           }
-          console.log(value);
-          setFilesInfo((oldState: any) => {
-            const clone = {
-              ...oldState,
-              [id]: {
-                ...oldState[id],
-                imgSrc: `${cloudflareGateway}/${value.cid}`,
-                cid: value.cid,
-              },
-            };
 
-            return clone;
-          });
+          console.log(value);
+          setFileInfo((oldState) => ({
+            ...oldState,
+            status: 'uploaded',
+            cid: value.cid,
+          }));
+
           resolve(value.cid);
         }
       };
 
-      xhr.send(file);
+      xhr.send(fileInfo.file);
     });
   };
 
-  const mintFile = () => {};
-
   return (
     <div>
-      <h1 className="text-2xl m-4">Mint NFTs</h1>
-      <div className="flex items-center justify-center space-x-4">
-        {Object.keys(filesInfo).map((val) => {
-          return (
-            <form
-              className="flex items-center justify-center space-x-4"
-              onSubmit={handleSubmit(() => {
-                if (filesInfo[val].cid) {
-                  return mintFile();
-                }
-                uploadFile(filesInfo[val].file, val);
-              })}
-            >
-              <button
-                type="submit"
-                disabled={!filesInfo[val].file}
-                className={`${
-                  !filesInfo[val].file ? 'bg-indigo-400' : 'bg-indigo-600'
-                } group relative w-auto flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white  hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
-              >
-                {filesInfo[val].file ? 'Upload NFT' : 'Mint NFT'}
-              </button>
-            </form>
-          );
-        })}
+      <h1 className="text-2xl m-4 text-center">Mint NFTs</h1>
 
-        <label
-          className="cursor-pointer rounded bg-black flex items-center justify-center bg-green h-10 w-40"
-          onDrop={dropFile}
-          onDragOver={dragClass}
-          onDragLeave={dragClass}
-        >
+      <div className="space-y-4">
+        <label className="cursor-pointer rounded bg-black flex items-center justify-center bg-green px-6 py-2">
           <input
             className="invisible opacity-0 hidden"
             type="file"
@@ -130,9 +75,29 @@ function Mint() {
             accept="image/png"
             onInput={dropFile}
           />
-          <p className="text-2xl">📁 </p>
-          <p className="text-sm text-white pl-2">Add File</p>
+          <p className="flex items-center text-sm text-white">
+            <span className="text-2xl mr-2">📁</span> Add File
+          </p>
         </label>
+
+        {fileInfo.file && (
+          <>
+            <div>
+              <h2 className="font-bold text-2xl">File Info:</h2>
+              <p>{`Name: ${fileInfo.file.name}`}</p>
+            </div>
+            <button
+              type="submit"
+              disabled={!fileInfo}
+              className="flex justify-center py-2 px-4 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+              onClick={() => uploadFile()}
+            >
+              {fileInfo ? 'Upload NFT' : 'Mint NFT'}
+            </button>
+          </>
+        )}
+
+        {fileInfo.status === 'uploaded' && <form></form>}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { LockClosedIcon } from '@heroicons/react/solid';
-import StellarLogo from './StellarLogo';
+import StellarLogo from './components/icons/StellarLogo';
 import { useMutation } from 'react-query';
 import { loginUser } from './state/api';
 import { parseAndToast } from './state/utils';

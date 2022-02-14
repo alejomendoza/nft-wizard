@@ -1,4 +1,3 @@
-import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Routes, Route, Link } from 'react-router-dom';
@@ -9,7 +8,7 @@ import Mint from './Mint';
 
 function App() {
   return (
-    <div className="App">
+    <div className="max-w-md mx-auto">
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="mint" element={<Mint />} />

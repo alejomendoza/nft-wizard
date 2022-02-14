@@ -54,17 +54,11 @@ export const uploadingErrorAtom = atom({
   default: '',
 }) as RecoilState<string>;
 
-export const fileAtom = atom({
+export const fileAtom = atom<{
+  status: 'empty' | 'uploaded';
+  file: File | null;
+  cid: string;
+}>({
   key: 'file',
-  default: null,
-}) as RecoilState<any>;
-
-interface FilesInfo {
-  [key: string]: { progress: number; imgSrc?: string; file: any; cid?: string };
-}
-
-export const filesInfoAtom = atom({
-  key: 'files_info',
-  default: {} as FilesInfo,
-  dangerouslyAllowMutability: true,
-}) as RecoilState<FilesInfo>;
+  default: { status: 'empty', file: null, cid: '' },
+});

@@ -1,5 +1,4 @@
 import {
-  Keypair,
   Asset,
   TransactionBuilder,
   Memo,
@@ -10,90 +9,74 @@ import {
 } from 'stellar-base';
 import { getConfig, getAccount } from './config';
 
-export async function buildNFTTransaction(
-  accountPublicKey: string,
-  issuerKey: Keypair,
-  code: string,
-  supply: number,
+export async function createNFT(
+  source: string,
+  issuer: string,
+  assetCode: string,
   cid: string
 ) {
-  const issuerPublicKey = issuerKey.publicKey();
-  const asset = new Asset(code, issuerPublicKey);
+  const asset = new Asset(assetCode, issuer);
 
   const account = await (async () => {
     try {
-      return await getAccount(accountPublicKey);
+      return await getAccount(source);
     } catch {
       throw new Error(
-        `Your account ${issuerPublicKey} does not exist on the Stellar ${
+        `Your account ${issuer} does not exist on the Stellar ${
           getConfig().network
         } network. It must be created before it can be used to submit transactions.`
       );
     }
   })();
 
-  const transaction = new TransactionBuilder(
+  const txBuilder = new TransactionBuilder(
     new Account(account.id, account.sequence),
     {
       fee: BASE_FEE,
       networkPassphrase: getConfig().networkPassphrase,
     }
   );
-  transaction.setTimeout(300);
-  transaction.addMemo(Memo.text(`Create ${code} NFT ✨`));
-  transaction.addOperation(
-    Operation.beginSponsoringFutureReserves({
-      sponsoredId: issuerPublicKey,
-    })
-  );
-  transaction.addOperation(
-    Operation.createAccount({
-      destination: issuerPublicKey,
-      startingBalance: '0',
-    })
-  );
 
-  transaction.addOperation(
-    Operation.manageData({
-      source: issuerPublicKey,
-      name: `ipfshash`,
-      value: cid,
-    })
-  );
+  txBuilder
+    .addOperation(
+      Operation.beginSponsoringFutureReserves({
+        sponsoredId: issuer,
+      })
+    )
+    .addOperation(
+      Operation.createAccount({
+        destination: issuer,
+        startingBalance: '0',
+      })
+    )
+    .addOperation(
+      Operation.manageData({
+        source: issuer,
+        name: `ipfsHash`,
+        value: cid,
+      })
+    )
+    .addOperation(
+      Operation.endSponsoringFutureReserves({
+        source: issuer,
+      })
+    )
+    .addOperation(
+      Operation.setOptions({
+        source: issuer,
+        // @ts-ignore
+        setFlags: 11,
+        masterWeight: 0,
+        lowThreshold: 0,
+        medThreshold: 0,
+        highThreshold: 0,
+        homeDomain: 'testdomain.com',
+        signer: { ed25519PublicKey: account.id, weight: 1 },
+      })
+    );
 
-  transaction.addOperation(
-    Operation.endSponsoringFutureReserves({
-      source: issuerPublicKey,
-    })
-  );
-  //   transaction.addOperation(
-  //     Operation.changeTrust({ asset: asset, limit: supply.toString() })
-  //   );
-  //   transaction.addOperation(
-  //     Operation.payment({
-  //       source: issuerPublicKey,
-  //       destination: accountPublicKey,
-  //       asset: asset,
-  //       amount: supply.toString(),
-  //     })
-  //   );
-  transaction.addOperation(
-    Operation.setOptions({
-      source: issuerPublicKey,
-      //   setFlags: '11',
-      masterWeight: 0,
-      lowThreshold: 0,
-      medThreshold: 0,
-      highThreshold: 0,
-      homeDomain: 'testdomain.com',
-      signer: { ed25519PublicKey: account.id, weight: 1 },
-    })
-  );
+  txBuilder.addMemo(Memo.text(`Create ${assetCode} NFT ✨`));
+  const tx = txBuilder.setTimeout(300).build();
 
-  const transactionBuilt = transaction.build();
-  transactionBuilt.sign(issuerKey);
-  const xdr = transactionBuilt.toEnvelope().toXDR('base64');
-  console.log(`Transaction built: ${xdr}`);
-
-  return xdr;
+  return tx.toXDR();
 }

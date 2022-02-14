@@ -1,4 +1,5 @@
 import { Networks } from 'stellar-base';
+import { handleResponse } from '../state/utils';
 
 export function getConfig() {
   switch (import.meta.env.VITE_STELLAR_NETWORK) {
@@ -34,6 +35,6 @@ export function getConfig() {
 export async function getAccount(publicKey: string) {
   let account = await fetch(
     `${getConfig().horizonUrl}/accounts/${publicKey}`
-  ).then(({ data }: any) => data);
+  ).then(handleResponse);
   return account;
 }

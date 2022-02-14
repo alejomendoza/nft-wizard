@@ -6,6 +6,8 @@ import { RecoilRoot } from 'recoil';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
+import './utils/polyfills';
+
 const queryClient = new QueryClient();
 
 ReactDOM.render(
