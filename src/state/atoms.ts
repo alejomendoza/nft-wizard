@@ -55,10 +55,10 @@ export const uploadingErrorAtom = atom({
 }) as RecoilState<string>;
 
 export const fileAtom = atom<{
-  status: 'empty' | 'uploaded';
+  isUploaded: boolean;
   file: File | null;
   cid: string;
 }>({
   key: 'file',
-  default: { status: 'empty', file: null, cid: '' },
+  default: { isUploaded: false, file: null, cid: '' },
 });

@@ -52,7 +52,7 @@ export async function createNFT(
     .addOperation(
       Operation.manageData({
         source: issuer,
-        name: `ipfsHash`,
+        name: `ipfshash`,
         value: cid,
       })
     )
@@ -80,3 +80,9 @@ export async function createNFT(
 
   return tx.toXDR();
 }
+
+export const mintNFT = (
+  source: string,
+  issuer: string,
+  assetCode: string
+) => {};

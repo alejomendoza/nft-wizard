@@ -1,10 +1,10 @@
-import 'react-toastify/dist/ReactToastify.css';
-
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
+import 'react-toastify/dist/ReactToastify.css';
+
 import Login from './Login';
-import Mint from './Mint';
+import Mint from 'src/Mint';
 
 function App() {
   return (

@@ -1,5 +1,5 @@
 module.exports = {
-  purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+  content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
     fontFamily: {
@@ -21,6 +21,7 @@ module.exports = {
           dark: '#6B7280',
         },
         black: {
+          DEFAULT: '#000000',
           cool: '#1A1B1D',
         },
       },
