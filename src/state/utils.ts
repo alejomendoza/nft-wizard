@@ -1,10 +1,12 @@
 import blobToHash from 'blob-to-hash';
 import { toast } from 'react-toastify';
+import { Metadata } from './atoms';
 
 export const isDev = import.meta.env.VITE_WEB_ENV !== 'production';
 export const baseUrl = isDev
   ? 'https://horizon-testnet.stellar.org'
   : 'https://horizon.stellar.org';
+export const ipfsProtocol = 'ipfs://';
 const nftStorageApi = 'https://api.nft.storage';
 const nftStorageApiKey = import.meta.env.VITE_NFT_STORAGE_API_KEY;
 const cloudflareGateway = 'https://cloudflare-ipfs.com/ipfs';
@@ -50,7 +52,7 @@ export const hashFile = async (file: File) => {
   );
 };
 
-export const uploadFile = (file: File) => {
+export const uploadFile = (file: File | Blob) => {
   return new Promise((resolve: (value: string) => void, reject) => {
     let xhr = new XMLHttpRequest();
     xhr.open('POST', `${nftStorageApi}/upload`, true);
@@ -72,4 +74,12 @@ export const uploadFile = (file: File) => {
 
     xhr.send(file);
   });
+};
+
+export const uploadNFTMetadata = (metadata: Metadata) => {
+  const blob = new Blob([JSON.stringify(metadata)], {
+    type: 'application/json',
+  });
+
+  return uploadFile(blob);
 };

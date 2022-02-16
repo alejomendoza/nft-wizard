@@ -1,21 +1,57 @@
 import { useForm } from 'react-hook-form';
+import { Keypair } from 'stellar-base';
 import { useRecoilValue } from 'recoil';
 import tw, { styled } from 'twin.macro';
 
 import Button from 'src/components/elements/Button';
-import { fileAtom } from 'src/state/atoms';
+import { fileAtom, userAtom } from 'src/state/atoms';
+import { createNFT } from 'src/stellar';
+import { ipfsProtocol, uploadNFTMetadata } from 'src/state/utils';
+
+type FormData = { name: string; code: string; description: string };
 
 const MetadataForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm({ mode: 'onChange' });
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: { name: '', code: '', description: '' },
+  });
 
   const fileInfo = useRecoilValue(fileAtom);
+  const user = useRecoilValue(userAtom);
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (data: FormData) => {
+    if (!user || fileInfo.file) return;
+
+    const { name, code, description } = data;
+    const keypair = Keypair.random();
+    const issuer = keypair.publicKey();
+    const domain = 'testdomain.com';
+    const url = `${ipfsProtocol}${fileInfo.cid}`;
+
+    const nftMetadata = {
+      name,
+      code,
+      description,
+      issuer,
+      domain,
+      url,
+      hash: fileInfo.hash,
+      cid: fileInfo.cid,
+    };
+
+    const metadataCid = await uploadNFTMetadata(nftMetadata);
+
+    const xdr = await createNFT(
+      user.account_id,
+      issuer,
+      code,
+      domain,
+      metadataCid
+    );
   };
 
   return (

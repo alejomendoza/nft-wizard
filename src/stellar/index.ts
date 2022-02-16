@@ -1,9 +1,7 @@
 import {
-  Asset,
   TransactionBuilder,
   Memo,
   Operation,
-  AuthImmutableFlag,
   Account,
   BASE_FEE,
 } from 'stellar-base';
@@ -13,10 +11,9 @@ export async function createNFT(
   source: string,
   issuer: string,
   assetCode: string,
+  domain: string,
   cid: string
 ) {
-  const asset = new Asset(assetCode, issuer);
-
   const account = await (async () => {
     try {
       return await getAccount(source);
@@ -70,7 +67,7 @@ export async function createNFT(
         lowThreshold: 0,
         medThreshold: 0,
         highThreshold: 0,
-        homeDomain: 'testdomain.com',
+        homeDomain: domain,
         signer: { ed25519PublicKey: account.id, weight: 1 },
       })
     );
