@@ -1,4 +1,4 @@
-import { atom, RecoilState, DefaultValue } from 'recoil';
+import { atom, RecoilState, DefaultValue, selector } from 'recoil';
 
 export type User = {
   account_id: string;
@@ -58,7 +58,10 @@ export const fileAtom = atom<{
   isUploaded: boolean;
   file: File | null;
   cid: string;
+  hash: string;
 }>({
   key: 'file',
-  default: { isUploaded: false, file: null, cid: '' },
+  default: { isUploaded: false, file: null, cid: '', hash: '' },
 });
+
+export const fileHash = selector({ key: 'fileHash', get: ({ get }) => {} });

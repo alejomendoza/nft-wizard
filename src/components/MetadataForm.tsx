@@ -47,7 +47,7 @@ const MetadataForm = () => {
 
       <StyledLabel>
         <p>File Hash</p>
-        <StyledInput readOnly disabled value={fileInfo.cid} />
+        <StyledInput readOnly disabled value={fileInfo.hash} />
       </StyledLabel>
 
       <StyledLabel>

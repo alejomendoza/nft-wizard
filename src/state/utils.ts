@@ -1,9 +1,13 @@
+import blobToHash from 'blob-to-hash';
 import { toast } from 'react-toastify';
 
 export const isDev = import.meta.env.VITE_WEB_ENV !== 'production';
 export const baseUrl = isDev
   ? 'https://horizon-testnet.stellar.org'
   : 'https://horizon.stellar.org';
+const nftStorageApi = 'https://api.nft.storage';
+const nftStorageApiKey = import.meta.env.VITE_NFT_STORAGE_API_KEY;
+const cloudflareGateway = 'https://cloudflare-ipfs.com/ipfs';
 
 export async function handleResponse(response: Response) {
   const { headers, ok } = response;
@@ -34,5 +38,38 @@ export const parseAndToast = (err: any) => {
   const error = parseError(err);
   toast.error(error.message, {
     position: toast.POSITION.TOP_RIGHT,
+  });
+};
+
+export const hashFile = async (file: File) => {
+  return blobToHash(
+    'sha256',
+    new Blob([new Uint8Array(await file.arrayBuffer())], {
+      type: file.type,
+    })
+  );
+};
+
+export const uploadFile = (file: File) => {
+  return new Promise((resolve: (value: string) => void, reject) => {
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', `${nftStorageApi}/upload`, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.setRequestHeader('Authorization', `Bearer ${nftStorageApiKey}`);
+
+    xhr.upload.addEventListener('progress', (e) => {
+      const progress = Math.round((e.loaded * 100.0) / e.total);
+      // setProgress((oldState) => ({ ...oldState, progress }));
+    });
+
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        let { value, ok } = JSON.parse(xhr.responseText);
+        if (!ok) reject('Something went wrong!');
+        resolve(value.cid);
+      }
+    };
+
+    xhr.send(file);
   });
 };

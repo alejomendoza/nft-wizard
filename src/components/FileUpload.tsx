@@ -10,10 +10,7 @@ import { fileAtom, uploadingErrorAtom } from '../state/atoms';
 import 'twin.macro';
 
 import Button from 'src/components/elements/Button';
-
-const cloudflareGateway = 'https://cloudflare-ipfs.com/ipfs';
-const nftStorageApi = 'https://api.nft.storage';
-const nftStorageApiKey = import.meta.env.VITE_NFT_STORAGE_API_KEY;
+import { hashFile, uploadFile } from 'src/state/utils';
 
 function Mint() {
   const [uploadingError, setUploadingError] =
@@ -28,51 +25,27 @@ function Mint() {
     const file = e.target.files?.[0];
 
     if (file && file.type === 'image/png') {
-      setFileInfo((oldState) => ({ ...oldState, file }));
+      const hash = await hashFile(file);
+      setFileInfo((oldState) => ({ ...oldState, file, hash }));
     }
   };
 
-  const uploadFile = () => {
-    setProgress((oldState) => ({ ...oldState, isLoading: true }));
-
-    return new Promise((resolve: (value: string) => void, reject) => {
-      let xhr = new XMLHttpRequest();
-      xhr.open('POST', `${nftStorageApi}/upload`, true);
-      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-      xhr.setRequestHeader('Authorization', `Bearer ${nftStorageApiKey}`);
-
-      xhr.upload.addEventListener('progress', (e) => {
-        const progress = Math.round((e.loaded * 100.0) / e.total);
-        setProgress((oldState) => ({ ...oldState, progress }));
-      });
-
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-          setProgress((oldState) => ({
-            ...oldState,
-            isLoading: false,
-          }));
-
-          let { value, ok } = JSON.parse(xhr.responseText);
-
-          if (!ok) {
-            setUploadingError('Something went wrong!');
-            reject();
-            return;
-          }
-
-          setFileInfo((oldState) => ({
-            ...oldState,
-            cid: value.cid,
-            isUploaded: true,
-          }));
-
-          resolve(value.cid);
-        }
-      };
-
-      xhr.send(fileInfo.file);
-    });
+  const handleUpload = async () => {
+    if (fileInfo.file) {
+      setProgress((oldState) => ({ ...oldState, isLoading: true }));
+      try {
+        const cid = await uploadFile(fileInfo.file);
+        setFileInfo((oldState) => ({
+          ...oldState,
+          cid: cid,
+          isUploaded: true,
+        }));
+      } catch (err) {
+        setUploadingError(err as any);
+      } finally {
+        setProgress((oldState) => ({ ...oldState, isLoading: false }));
+      }
+    }
   };
 
   return (
@@ -105,7 +78,7 @@ function Mint() {
           type="submit"
           disabled={!fileInfo.file || fileInfo.isUploaded}
           isLoading={isLoading}
-          onClick={() => uploadFile()}
+          onClick={() => handleUpload()}
           tw="ml-auto"
         >
           {fileInfo.isUploaded ? '✔️ Uploaded' : 'Upload'}
