@@ -87,3 +87,11 @@ export const uploadNFTMetadata = (metadata: Metadata) => {
 
   return uploadFile(blob);
 };
+
+export const truncateMiddle = (text: string, maxLength: number) => {
+  return (
+    text.substring(0, maxLength / 2) +
+    '...' +
+    text.substring(text.length - maxLength / 2)
+  );
+};

@@ -1,4 +1,4 @@
-import { getMetadata } from 'src/state/utils';
+import { getMetadata, handleResponse } from 'src/state/utils';
 import {
   TransactionBuilder,
   Memo,
@@ -7,16 +7,35 @@ import {
   BASE_FEE,
   Claimant,
   Asset,
+  Keypair,
 } from 'stellar-base';
 import { getConfig, getAccount } from './config';
 
+export const submitTransaction = async (xdr: string) => {
+  const body = new FormData();
+  body.append('tx', xdr);
+
+  return await fetch(getConfig().horizonUrl + '/transactions', {
+    method: 'POST',
+    body,
+  }).then(handleResponse);
+};
+
+export const getSponsored = async (sponsor: string) => {
+  return await fetch(
+    getConfig().horizonUrl + `/accounts/?sponsor=${sponsor}`
+  ).then(handleResponse);
+};
+
 export async function createNFT(
   source: string,
-  issuer: string,
+  issuerKeypair: Keypair,
   assetCode: string,
   domain: string,
   cid: string
 ) {
+  const issuer = issuerKeypair.publicKey();
+
   const account = await getAccount(source).catch(() => {
     throw new Error(
       `Your account ${issuer} does not exist on the Stellar ${
@@ -53,6 +72,12 @@ export async function createNFT(
       })
     )
     .addOperation(
+      Operation.setOptions({
+        source: issuer,
+        signer: { ed25519PublicKey: account.id, weight: 1 },
+      })
+    )
+    .addOperation(
       Operation.endSponsoringFutureReserves({
         source: issuer,
       })
@@ -67,12 +92,12 @@ export async function createNFT(
         medThreshold: 0,
         highThreshold: 0,
         homeDomain: domain,
-        signer: { ed25519PublicKey: account.id, weight: 1 },
       })
     );
 
   txBuilder.addMemo(Memo.text(`Create ${assetCode} NFT ✨`));
   const tx = txBuilder.setTimeout(300).build();
+  tx.sign(issuerKeypair);
 
   return tx.toXDR();
 }

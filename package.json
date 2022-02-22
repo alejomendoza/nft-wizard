@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@albedo-link/intent": "^0.11.2",
     "@headlessui/react": "^1.4.3",
     "@heroicons/react": "^1.0.5",
     "@types/sha.js": "^2.4.0",

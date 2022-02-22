@@ -3,10 +3,10 @@ import tw from 'twin.macro';
 import FileUpload from 'src/components/FileUpload';
 import MetadataForm from 'src/components/MetadataForm';
 
-const Mint = () => {
+const CreateNFT = () => {
   return (
     <div tw="my-8 space-y-8">
-      <h1 tw="text-2xl font-bold mb-4 text-center">Mint NFT</h1>
+      <h1 tw="text-2xl font-bold mb-4 text-center">Create NFT</h1>
 
       <StyledSection>
         <StyledTitle>1. IPFS File Upload</StyledTitle>
@@ -24,4 +24,4 @@ const Mint = () => {
 const StyledSection = tw.section``;
 const StyledTitle = tw.h2`mb-4 text-lg font-bold`;
 
-export default Mint;
+export default CreateNFT;

@@ -3,15 +3,20 @@ import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import Login from './Login';
-import Mint from 'src/Mint';
+import Login from './components/Login';
+import CreateNFT from 'src/components/CreateNFT';
+import Layout from './components/Layout';
+import Dashboard from './components/Dashboard';
 
 function App() {
   return (
-    <div className="max-w-md mx-auto">
+    <div>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="mint" element={<Mint />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="create" element={<CreateNFT />} />
+          <Route path="login" element={<Login />} />
+        </Route>
       </Routes>
       <ToastContainer autoClose={10000} />
     </div>

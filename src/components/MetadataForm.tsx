@@ -1,4 +1,7 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from 'react-query';
+import albedo from '@albedo-link/intent';
 import { Keypair } from 'stellar-base';
 import { useRecoilValue } from 'recoil';
 import tw, { styled } from 'twin.macro';
@@ -6,12 +9,15 @@ import shajs from 'sha.js';
 
 import Button from 'src/components/elements/Button';
 import { fileAtom, userAtom } from 'src/state/atoms';
-import { createNFT } from 'src/stellar';
+import { createNFT, submitTransaction } from 'src/stellar';
 import { ipfsProtocol, uploadNFTMetadata } from 'src/state/utils';
+import { getConfig } from 'src/stellar/config';
 
 type FormData = { name: string; code: string; description: string };
 
 const MetadataForm = () => {
+  const queryClient = useQueryClient();
+
   const {
     register,
     handleSubmit,
@@ -24,8 +30,11 @@ const MetadataForm = () => {
   const fileInfo = useRecoilValue(fileAtom);
   const user = useRecoilValue(userAtom);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit = async (data: FormData) => {
     if (!user || !fileInfo.file) return;
+    setIsLoading(true);
 
     const { name, code, description } = data;
 
@@ -51,11 +60,25 @@ const MetadataForm = () => {
 
     const xdr = await createNFT(
       user.account_id,
-      issuer,
+      keypair,
       code,
       domain,
       metadataCid
     );
+
+    try {
+      const { signed_envelope_xdr } = await albedo.tx({
+        xdr,
+        network: getConfig().network,
+      });
+      await submitTransaction(signed_envelope_xdr);
+
+      queryClient.invalidateQueries('sponsored');
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -99,6 +122,8 @@ const MetadataForm = () => {
         disabled={!isValid || !fileInfo.isUploaded}
         tw="ml-auto"
         type="submit"
+        isLoading={isLoading}
+        loadingText="Submitting"
       >
         Submit
       </Button>

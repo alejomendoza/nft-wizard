@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@albedo-link/intent@^0.11.2":
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/@albedo-link/intent/-/intent-0.11.2.tgz#af1e8cb2556a846712c87fdd9c0eb21705f177a0"
+  integrity sha512-RBlbP79zFhboPoHplsiPW4/FsYEvw58Nnz5CQMm8peNCGmWgx5dIiFDmqcgGY5KEbmMGlRTGEFn+XAyka9L9ig==
+
 "@ampproject/remapping@^2.0.0":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@ampproject/remapping/-/remapping-2.1.1.tgz#7922fb0817bf3166d8d9e258c57477e3fd1c3610"

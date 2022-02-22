@@ -1,38 +1,16 @@
 import { useForm } from 'react-hook-form';
 import { LockClosedIcon } from '@heroicons/react/solid';
-import StellarLogo from './components/icons/StellarLogo';
-import { useMutation } from 'react-query';
-import { loginUser } from './state/api';
-import { parseAndToast } from './state/utils';
-import { useRecoilState } from 'recoil';
-import { userAtom } from './state/atoms';
-import { useNavigate } from 'react-router';
+import 'twin.macro';
+
+import StellarLogo from './icons/StellarLogo';
+
+import Wallet from './Wallet';
 
 function Login() {
   const { register, handleSubmit } = useForm();
-  const [user, setUser] = useRecoilState(userAtom);
-  const navigate = useNavigate();
-
-  const onSubmit = ({ publicKey }: any) => {
-    LoginMutation.mutate({ publicKey: publicKey });
-  };
-
-  const LoginMutation = useMutation(
-    ({ publicKey }: { publicKey: string }) => loginUser(publicKey),
-    {
-      mutationKey: 'login',
-      onSuccess: (res) => {
-        setUser(res);
-        navigate('/mint');
-      },
-      onError: (e) => {
-        parseAndToast(e);
-      },
-    }
-  );
 
   return (
-    <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div tw="py-12 px-4 sm:px-6 lg:px-8 space-y-2">
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto h-12 w-auto">
@@ -42,7 +20,7 @@ function Login() {
             Sign in to your Stellar account
           </h2>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <form className="mt-8 space-y-6">
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -73,6 +51,8 @@ function Login() {
           </div>
         </form>
       </div>
+
+      <Wallet />
     </div>
   );
 }
