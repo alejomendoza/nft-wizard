@@ -15,6 +15,7 @@
   "dependencies": {
     "@headlessui/react": "^1.4.3",
     "@heroicons/react": "^1.0.5",
+    "@types/sha.js": "^2.4.0",
     "blob-to-hash": "^0.0.1",
     "buffer": "^6.0.3",
     "react": "^17.0.2",
@@ -24,6 +25,7 @@
     "react-router-dom": "^6.2.1",
     "react-toastify": "^8.1.1",
     "recoil": "^0.6.1",
+    "sha.js": "^2.4.11",
     "stellar-base": "^7.0.0",
     "styled-components": "^5.3.3"
   },

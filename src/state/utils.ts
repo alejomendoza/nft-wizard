@@ -11,6 +11,10 @@ const nftStorageApi = 'https://api.nft.storage';
 const nftStorageApiKey = import.meta.env.VITE_NFT_STORAGE_API_KEY;
 const cloudflareGateway = 'https://cloudflare-ipfs.com/ipfs';
 
+export const getMetadata = async (cid: String) => {
+  return fetch(cloudflareGateway + `/${cid}`).then(handleResponse);
+};
+
 export async function handleResponse(response: Response) {
   const { headers, ok } = response;
   const contentType = headers.get('content-type');

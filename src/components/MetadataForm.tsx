@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { Keypair } from 'stellar-base';
 import { useRecoilValue } from 'recoil';
 import tw, { styled } from 'twin.macro';
+import shajs from 'sha.js';
 
 import Button from 'src/components/elements/Button';
 import { fileAtom, userAtom } from 'src/state/atoms';
@@ -24,10 +25,13 @@ const MetadataForm = () => {
   const user = useRecoilValue(userAtom);
 
   const onSubmit = async (data: FormData) => {
-    if (!user || fileInfo.file) return;
+    if (!user || !fileInfo.file) return;
 
     const { name, code, description } = data;
-    const keypair = Keypair.random();
+
+    const seed = shajs('sha256').update(fileInfo.cid).digest();
+    const keypair = Keypair.fromRawEd25519Seed(seed);
+
     const issuer = keypair.publicKey();
     const domain = 'testdomain.com';
     const url = `${ipfsProtocol}${fileInfo.cid}`;

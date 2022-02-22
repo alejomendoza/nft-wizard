@@ -1,9 +1,12 @@
+import { getMetadata } from 'src/state/utils';
 import {
   TransactionBuilder,
   Memo,
   Operation,
   Account,
   BASE_FEE,
+  Claimant,
+  Asset,
 } from 'stellar-base';
 import { getConfig, getAccount } from './config';
 
@@ -14,17 +17,13 @@ export async function createNFT(
   domain: string,
   cid: string
 ) {
-  const account = await (async () => {
-    try {
-      return await getAccount(source);
-    } catch {
-      throw new Error(
-        `Your account ${issuer} does not exist on the Stellar ${
-          getConfig().network
-        } network. It must be created before it can be used to submit transactions.`
-      );
-    }
-  })();
+  const account = await getAccount(source).catch(() => {
+    throw new Error(
+      `Your account ${issuer} does not exist on the Stellar ${
+        getConfig().network
+      } network. It must be created before it can be used to submit transactions.`
+    );
+  });
 
   const txBuilder = new TransactionBuilder(
     new Account(account.id, account.sequence),
@@ -78,8 +77,51 @@ export async function createNFT(
   return tx.toXDR();
 }
 
-export const mintNFT = (
+export const mintNFT = async (
   source: string,
   issuer: string,
-  assetCode: string
-) => {};
+  destination: string
+) => {
+  const account = await getAccount(source).catch(() => {
+    throw new Error(
+      `Your account ${issuer} does not exist on the Stellar ${
+        getConfig().network
+      } network. It must be created before it can be used to submit transactions.`
+    );
+  });
+
+  const ipfsMetadata = await getMetadata(account.data.ipfsHash);
+
+  const asset = new Asset(ipfsMetadata.code, issuer);
+
+  const txBuilder = new TransactionBuilder(
+    new Account(account.id, account.sequence),
+    {
+      fee: BASE_FEE,
+      networkPassphrase: getConfig().networkPassphrase,
+    }
+  );
+
+  const claimants = [
+    new Claimant(destination, Claimant.predicateUnconditional()),
+  ];
+
+  txBuilder
+    .addOperation(
+      Operation.beginSponsoringFutureReserves({ sponsoredId: issuer })
+    )
+    .addOperation(
+      Operation.createClaimableBalance({
+        claimants,
+        asset,
+        amount: '0.0000001',
+      })
+    )
+    .addOperation(Operation.endSponsoringFutureReserves({ source }));
+
+  txBuilder.addMemo(Memo.text(`Mint NFT ✨`));
+
+  const tx = txBuilder.setTimeout(300).build();
+
+  return tx.toXDR();
+};
