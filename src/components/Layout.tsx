@@ -8,10 +8,13 @@ const Layout = () => {
         <NavBar>
           <NavMenu>
             <NavMenuTab>
-              <NavLink to="/">List</NavLink>
+              <NavLink to="/">NFTs</NavLink>
             </NavMenuTab>
             <NavMenuTab>
               <NavLink to="/create">Create</NavLink>
+            </NavMenuTab>
+            <NavMenuTab>
+              <NavLink to="/mint">Mint</NavLink>
             </NavMenuTab>
           </NavMenu>
         </NavBar>

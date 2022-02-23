@@ -1,10 +1,11 @@
+import { Suspense } from 'react';
 import { useRecoilValue } from 'recoil';
+import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { getSponsored } from 'src/stellar';
 import 'twin.macro';
 
+import { getSponsored } from 'src/stellar';
 import { userAtom } from 'src/state/atoms';
-import { Suspense } from 'react';
 import Spinner from './icons/Spinner';
 import { truncateMiddle } from 'src/state/utils';
 import Button from './elements/Button';
@@ -62,7 +63,12 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
           <tr key={account.id}>
             <td>{truncateMiddle(account.id, 8)}</td>
             <td tw="flex gap-2 justify-end">
-              <Button>Mint</Button>
+              <Link
+                to="mint"
+                state={{ issuer: account.id, ipfshash: account.ipfshash }}
+              >
+                Mint
+              </Link>
             </td>
           </tr>
         ))}
@@ -70,4 +76,5 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
     </table>
   );
 };
+
 export default Dashboard;

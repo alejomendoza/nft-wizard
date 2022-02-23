@@ -12,7 +12,7 @@ import 'twin.macro';
 import Button from 'src/components/elements/Button';
 import { hashFile, uploadFile } from 'src/state/utils';
 
-function Mint() {
+function FileUpload() {
   const [uploadingError, setUploadingError] =
     useRecoilState(uploadingErrorAtom);
 
@@ -120,4 +120,4 @@ const ProgressBar = () => {
   );
 };
 
-export default Mint;
+export default FileUpload;
