@@ -1,4 +1,4 @@
-import { getMetadata, handleResponse } from 'src/state/utils';
+import { getMetadata, handleResponse } from 'src/utils';
 import {
   TransactionBuilder,
   Memo,
@@ -8,6 +8,7 @@ import {
   Claimant,
   Asset,
   Keypair,
+  Networks,
 } from 'stellar-base';
 import { getConfig, getAccount } from './config';
 
@@ -21,9 +22,19 @@ export const submitTransaction = async (xdr: string) => {
   }).then(handleResponse);
 };
 
-export const getSponsored = async (sponsor: string) => {
+export const getSponsoredAccounts = async (sponsor: string) => {
   return await fetch(
     getConfig().horizonUrl + `/accounts/?sponsor=${sponsor}`
+  ).then(handleResponse);
+};
+
+export const getSponsoredClaimableBalances = async (
+  sponsor: string,
+  claimant: string
+) => {
+  return await fetch(
+    getConfig().horizonUrl +
+      `/claimable_balances/?sponsor=${sponsor}&claimant=${claimant}`
   ).then(handleResponse);
 };
 
@@ -103,19 +114,20 @@ export async function createNFT(
 }
 
 export const mintNFT = async (
-  source: string,
+  sponsor: string,
   issuer: string,
+  ipfshash: string,
   destination: string
 ) => {
-  const account = await getAccount(source).catch(() => {
+  const account = await getAccount(sponsor).catch(() => {
     throw new Error(
-      `Your account ${issuer} does not exist on the Stellar ${
+      `Your account ${sponsor} does not exist on the Stellar ${
         getConfig().network
       } network. It must be created before it can be used to submit transactions.`
     );
   });
 
-  const ipfsMetadata = await getMetadata(account.data.ipfsHash);
+  const ipfsMetadata = await getMetadata(ipfshash);
 
   const asset = new Asset(ipfsMetadata.code, issuer);
 
@@ -133,16 +145,19 @@ export const mintNFT = async (
 
   txBuilder
     .addOperation(
-      Operation.beginSponsoringFutureReserves({ sponsoredId: issuer })
+      Operation.beginSponsoringFutureReserves({
+        sponsoredId: issuer,
+      })
     )
     .addOperation(
       Operation.createClaimableBalance({
         claimants,
         asset,
         amount: '0.0000001',
+        source: issuer,
       })
     )
-    .addOperation(Operation.endSponsoringFutureReserves({ source }));
+    .addOperation(Operation.endSponsoringFutureReserves({ source: issuer }));
 
   txBuilder.addMemo(Memo.text(`Mint NFT ✨`));
 

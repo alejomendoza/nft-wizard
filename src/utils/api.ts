@@ -1,10 +1,4 @@
-import { baseUrl, handleResponse } from './utils';
-
-export const defaultQueryOptions = {
-  retry: false,
-  staleTime: Infinity,
-  refetchOnWindowFocus: false,
-};
+import { baseUrl, handleResponse } from '.';
 
 export const loginUser = (publicKey: string): Promise<any> => {
   return fetch(`${baseUrl}/accounts/${publicKey}`, {

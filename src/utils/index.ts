@@ -1,6 +1,6 @@
 import blobToHash from 'blob-to-hash';
 import { toast } from 'react-toastify';
-import { Metadata } from './atoms';
+import { Metadata } from 'src/state/atoms';
 
 export const isDev = import.meta.env.VITE_WEB_ENV !== 'production';
 export const baseUrl = isDev

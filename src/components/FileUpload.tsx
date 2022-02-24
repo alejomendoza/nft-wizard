@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   atom,
   selector,
@@ -10,7 +9,7 @@ import { fileAtom, uploadingErrorAtom } from '../state/atoms';
 import 'twin.macro';
 
 import Button from 'src/components/elements/Button';
-import { hashFile, uploadFile } from 'src/state/utils';
+import { hashFile, uploadFile } from 'src/utils';
 
 function FileUpload() {
   const [uploadingError, setUploadingError] =

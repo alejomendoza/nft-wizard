@@ -1,23 +1,29 @@
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import albedo from '@albedo-link/intent';
 import { useLocation } from 'react-router-dom';
-import { useQuery, useIsFetching } from 'react-query';
+import { useQuery } from 'react-query';
 import { StrKey } from 'stellar-base';
 import tw from 'twin.macro';
 
 import Button from './elements/Button';
-import { getMetadata } from 'src/state/utils';
-import { getAccount } from 'src/stellar/config';
+import { getMetadata } from 'src/utils';
+import { getAccount, getConfig } from 'src/utils/stellar/config';
+import { mintNFT } from 'src/utils/stellar';
+import { useRecoilValue } from 'recoil';
+import { userAtom } from 'src/state/atoms';
+
 import Spinner from './icons/Spinner';
 
 const MintNFT = () => {
+  const user = useRecoilValue(userAtom);
   const { state } = useLocation() as any;
   const [issuer, setIssuer] = useState('');
   const [cid, setCid] = useState('');
   const [destination, setDestination] = useState('');
+  const [isMinting, setIsMinting] = useState(false);
   const timeoutRef = useRef<any>();
 
   const accountQuery = useQuery(['mint', 'account'], () => getAccount(issuer), {
-    refetchOnWindowFocus: false,
     enabled: false,
     onSuccess: (account) => {
       setCid(Buffer.from(account.data?.ipfshash || '', 'base64').toString());
@@ -45,6 +51,23 @@ const MintNFT = () => {
       timeoutRef.current = setTimeout(() => {
         accountQuery.refetch();
       }, 1500);
+    }
+  };
+
+  const handleMint = async () => {
+    setIsMinting(true);
+    try {
+      const xdr = await mintNFT(user?.account_id!, issuer, cid, destination);
+      await albedo.tx({
+        xdr,
+        network: getConfig().network,
+        submit: true,
+        pubkey: user?.account_id!,
+      });
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsMinting(false);
     }
   };
 
@@ -80,7 +103,13 @@ const MintNFT = () => {
         </div>
       )}
 
-      <Button disabled={!isReady} tw="ml-auto">
+      <Button
+        disabled={!isReady}
+        tw="ml-auto"
+        loadingText="Minting"
+        isLoading={isMinting}
+        onClick={handleMint}
+      >
         Mint
       </Button>
     </div>

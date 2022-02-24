@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import 'twin.macro';
 
-import { getSponsored } from 'src/stellar';
+import { getSponsoredAccounts } from 'src/utils/stellar';
 import { userAtom } from 'src/state/atoms';
+import { truncateMiddle } from 'src/utils';
+
 import Spinner from './icons/Spinner';
-import { truncateMiddle } from 'src/state/utils';
-import Button from './elements/Button';
 
 const Dashboard = () => {
   const user = useRecoilValue(userAtom);
@@ -26,10 +26,9 @@ const Dashboard = () => {
 const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
   const sponsoredQuery = useQuery(
     ['sponsored'],
-    () => getSponsored(publicKey),
+    () => getSponsoredAccounts(publicKey),
     {
       suspense: true,
-      refetchOnWindowFocus: false,
       select: (data) =>
         data._embedded.records.map(
           ({ id, data: { ipfshash }, ...rest }: any) => ({
@@ -50,11 +49,11 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
     <table tw="w-full table-fixed">
       <thead>
         <tr tw="all-child:py-4">
-          <th scope="col" tw="text-left">
+          <th scope="col" align="left">
             Public Key
           </th>
-          <th scope="col" tw="text-right">
-            Options
+          <th scope="col" align="right">
+            Actions
           </th>
         </tr>
       </thead>
@@ -62,7 +61,7 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
         {sponsoredAccounts.map((account) => (
           <tr key={account.id}>
             <td>{truncateMiddle(account.id, 8)}</td>
-            <td tw="flex gap-2 justify-end">
+            <td align="right">
               <Link
                 to="mint"
                 state={{ issuer: account.id, ipfshash: account.ipfshash }}

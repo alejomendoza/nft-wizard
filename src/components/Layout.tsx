@@ -1,5 +1,8 @@
+import { Suspense } from 'react';
 import { NavLink as Link, Outlet } from 'react-router-dom';
 import tw, { styled } from 'twin.macro';
+
+import Spinner from './icons/Spinner';
 
 const Layout = () => {
   return (
@@ -16,11 +19,16 @@ const Layout = () => {
             <NavMenuTab>
               <NavLink to="/mint">Mint</NavLink>
             </NavMenuTab>
+            <NavMenuTab>
+              <NavLink to="/claim">Claim</NavLink>
+            </NavMenuTab>
           </NavMenu>
         </NavBar>
 
         <Content>
-          <Outlet />
+          <Suspense fallback={<Spinner />}>
+            <Outlet />
+          </Suspense>
         </Content>
       </MainLayout>
     </>
@@ -29,7 +37,7 @@ const Layout = () => {
 
 const MainLayout = tw.div`min-h-screen`;
 
-const NavBar = tw.nav`sticky top-0 z-10`;
+const NavBar = tw.nav`sticky top-0 z-10 bg-white`;
 const NavMenu = tw.ul`max-w-2xl mx-auto flex justify-between items-center`;
 const NavMenuTab = tw.li`flex-1 text-center`;
 

@@ -4,11 +4,13 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import Login from './components/Login';
+import Login from 'src/components/Login';
 import CreateNFT from 'src/components/CreateNFT';
-import Layout from './components/Layout';
-import Dashboard from './components/Dashboard';
-import MintNFT from './components/MintNFT';
+import Layout from 'src/components/Layout';
+import Dashboard from 'src/components/Dashboard';
+import MintNFT from 'src/components/MintNFT';
+import ClaimNFT from './components/ClaimNFT';
+import Spinner from './components/icons/Spinner';
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="create" element={<CreateNFT />} />
           <Route path="mint" element={<MintNFT />} />
+          <Route path="claim" element={<ClaimNFT />} />
           <Route path="login" element={<Login />} />
         </Route>
       </Routes>

@@ -1,5 +1,5 @@
 import { Networks } from 'stellar-base';
-import { handleResponse } from '../state/utils';
+import { handleResponse } from 'src/utils';
 
 export function getConfig() {
   switch (import.meta.env.VITE_STELLAR_NETWORK) {

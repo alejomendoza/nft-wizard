@@ -9,7 +9,9 @@ import './utils/polyfills';
 import './index.css';
 import App from './App';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { refetchOnWindowFocus: false, retry: false } },
+});
 
 ReactDOM.render(
   <RecoilRoot>

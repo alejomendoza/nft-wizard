@@ -9,9 +9,9 @@ import shajs from 'sha.js';
 
 import Button from 'src/components/elements/Button';
 import { fileAtom, userAtom } from 'src/state/atoms';
-import { createNFT, submitTransaction } from 'src/stellar';
-import { ipfsProtocol, uploadNFTMetadata } from 'src/state/utils';
-import { getConfig } from 'src/stellar/config';
+import { createNFT, submitTransaction } from 'src/utils/stellar';
+import { ipfsProtocol, uploadNFTMetadata } from 'src/utils';
+import { getConfig } from 'src/utils/stellar/config';
 
 type FormData = { name: string; code: string; description: string };
 
