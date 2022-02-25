@@ -7,6 +7,24 @@ module.exports = {
     },
     extend: {
       colors: {
+        yolk: {
+          DEFAULT: '#ffa51e',
+        },
+        ochre: {
+          DEFAULT: '#ff5500',
+        },
+        violet: {
+          DEFAULT: '#7d00ff',
+        },
+        moss: {
+          DEFAULT: '#00aa46',
+        },
+        coal: {
+          DEFAULT: '#000000',
+        },
+        cloud: {
+          DEFAULT: '#e1e1e1',
+        },
         blue: {
           DEFAULT: '#2563EB',
         },
@@ -23,6 +41,52 @@ module.exports = {
         black: {
           DEFAULT: '#000000',
           cool: '#1A1B1D',
+        },
+        brand: {
+          DEFAULT: '#5332e6',
+          hover: '#937eef',
+        },
+        background: {
+          DEFAULT: '#292d3e',
+          secondary: '#303448',
+          tertiary: '#222634',
+          tooltip: '#191b25',
+        },
+        success: {
+          DEFAULT: '#26db7b',
+          background: '#284445',
+          border: '#257554',
+        },
+        error: {
+          DEFAULT: '#ee5a74',
+          background: '#482f42',
+          border: '#89344c',
+        },
+        warning: {
+          DEFAULT: '#f8c252',
+          background: '#4a433c',
+          border: '#8f7138',
+        },
+        info: {
+          DEFAULT: '#6260eb',
+          background: '#2c2a57',
+          border: '#33248c',
+        },
+        text: {
+          DEFAULT: '#fff',
+          secondary: '#d4d5d8',
+          tertiary: '#a9abb2',
+          link: '#6260eb',
+          hover: '#937eef',
+        },
+        border: {
+          DEFAULT: '#3a3e4d',
+          secondary: '#4b4f5d',
+        },
+        example: {
+          DEFAULT: '#303448',
+          details: '#303448',
+          code: '#222634',
         },
       },
     },
