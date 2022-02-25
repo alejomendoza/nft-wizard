@@ -1,5 +1,4 @@
 import { Networks } from 'stellar-base';
-import { handleResponse } from 'src/utils';
 
 export function getConfig() {
   switch (import.meta.env.VITE_STELLAR_NETWORK) {
@@ -30,11 +29,4 @@ export function getConfig() {
           `https://stellarterm.com/exchange/${code}-${issuer}/XLM-native`,
       };
   }
-}
-
-export async function getAccount(publicKey: string) {
-  let account = await fetch(
-    `${getConfig().horizonUrl}/accounts/${publicKey}`
-  ).then(handleResponse);
-  return account;
 }

@@ -1,20 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
-import albedo from '@albedo-link/intent';
 import { useLocation } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import albedo from '@albedo-link/intent';
 import { useQuery } from 'react-query';
 import { StrKey } from 'stellar-base';
 import tw from 'twin.macro';
 
 import Button from './elements/Button';
 import { getMetadata } from 'src/utils';
-import { getAccount, getConfig } from 'src/utils/stellar/config';
-import { mintNFT } from 'src/utils/stellar';
-import { useRecoilValue } from 'recoil';
+import { getConfig } from 'src/utils/stellar/config';
+import { mintNFT, getAccount } from 'src/utils/stellar';
 import { userAtom } from 'src/state/atoms';
 
 import Spinner from './icons/Spinner';
 
-const MintNFT = () => {
+const NFTMint = () => {
   const user = useRecoilValue(userAtom);
   const { state } = useLocation() as any;
   const [issuer, setIssuer] = useState('');
@@ -141,4 +141,4 @@ const IpfsData = ({ cid }: { cid: string }) => {
   );
 };
 
-export default MintNFT;
+export default NFTMint;

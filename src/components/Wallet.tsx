@@ -1,9 +1,9 @@
 import albedo from '@albedo-link/intent';
 import { useNavigate } from 'react-router';
 import { useSetRecoilState } from 'recoil';
+import 'twin.macro';
 
 import { userAtom } from 'src/state/atoms';
-import 'twin.macro';
 
 import Button from './elements/Button';
 
@@ -24,5 +24,7 @@ const Wallet = () => {
     </Button>
   );
 };
+
+export const WalletButton = () => {};
 
 export default Wallet;

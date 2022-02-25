@@ -10,7 +10,7 @@ import { getConfig } from 'src/utils/stellar/config';
 
 import Button from './elements/Button';
 
-const ClaimNFT = () => {
+const NFTClaim = () => {
   const user = useRecoilValue(userAtom)!;
 
   const claimsQuery = useQuery(
@@ -71,4 +71,4 @@ const ClaimNFT = () => {
   );
 };
 
-export default ClaimNFT;
+export default NFTClaim;

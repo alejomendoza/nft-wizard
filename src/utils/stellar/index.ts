@@ -8,9 +8,8 @@ import {
   Claimant,
   Asset,
   Keypair,
-  Networks,
 } from 'stellar-base';
-import { getConfig, getAccount } from './config';
+import { getConfig } from './config';
 
 export const submitTransaction = async (xdr: string) => {
   const body = new FormData();
@@ -20,6 +19,12 @@ export const submitTransaction = async (xdr: string) => {
     method: 'POST',
     body,
   }).then(handleResponse);
+};
+
+export const getAccount = async (publicKey: string) => {
+  return await fetch(
+    getConfig().horizonUrl + `/accounts/?sponsor=${publicKey}`
+  ).then(handleResponse);
 };
 
 export const getSponsoredAccounts = async (sponsor: string) => {

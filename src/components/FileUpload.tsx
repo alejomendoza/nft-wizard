@@ -5,7 +5,7 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
-import { fileAtom, uploadingErrorAtom } from '../state/atoms';
+import { fileAtom, uploadingErrorAtom } from 'src/state/atoms';
 import 'twin.macro';
 
 import Button from 'src/components/elements/Button';
