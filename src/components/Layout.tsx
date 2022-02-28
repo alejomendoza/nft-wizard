@@ -13,33 +13,36 @@ const Layout = () => {
   const [isDarkMode, setIsDarkMode] = useRecoilState(darkModeAtom);
 
   return (
-    <MainLayout>
-      <Header>
-        <HeaderContent>
-          <div tw="flex items-center gap-2 text-xl">
-            <StellarLogoFull />
-            <div tw="border-l h-full border-gray-300" />
-            <p>NFT Wizard</p>
-          </div>
-          <div tw="flex items-center gap-4 all-child:h-full">
-            <WalletMenu />
-            <button
-              tw="rounded-full border border-current p-2"
-              onClick={() => setIsDarkMode((oldState) => !oldState)}
-            >
-              {isDarkMode ? <FaSun /> : <FaMoon />}
-            </button>
-          </div>
-        </HeaderContent>
-      </Header>
+    <>
+      <MainLayout>
+        <Header>
+          <HeaderContent>
+            <div tw="flex items-center gap-4 text-xl">
+              <StellarLogoFull tw="sibling:(hidden sm:block)" />
+              <div tw="border-l h-full border-gray-300" />
+              <p>NFT Wizard</p>
+            </div>
+            <div tw="flex items-center gap-4 all-child:h-full">
+              <WalletMenu />
+              <button
+                tw="rounded-full border border-current p-2"
+                onClick={() => setIsDarkMode((oldState) => !oldState)}
+              >
+                {isDarkMode ? <FaSun /> : <FaMoon />}
+              </button>
+            </div>
+          </HeaderContent>
+        </Header>
 
-      <Nav />
+        <Nav />
 
-      <Content>
-        <Outlet />
-      </Content>
+        <Content>
+          <Outlet />
+        </Content>
+      </MainLayout>
+
       <Footer />
-    </MainLayout>
+    </>
   );
 };
 
@@ -60,11 +63,11 @@ const Nav = () => {
   );
 };
 
-const MainLayout = tw.div`min-h-screen transition-colors dark:(bg-background text-white)`;
-const MainSize = tw.div`max-w-4xl mx-auto`;
+const MainLayout = tw.div`min-h-screen transition-colors`;
+const MainSize = tw.div`max-w-4xl mx-auto px-4`;
 
 const Header = tw.header`py-8`;
-const HeaderContent = tw(MainSize)`flex justify-between`;
+const HeaderContent = tw(MainSize)`flex flex-wrap justify-between gap-4`;
 
 const NavBar = tw.nav`sticky top-0 z-10 border-t border-b border-black/5 bg-black/5 shadow-sm`;
 const NavMenu = tw(MainSize)`gap-2 py-4 flex justify-between`;
@@ -76,6 +79,6 @@ const NavLink = styled(Link).attrs({
   tw`block rounded flex-1 text-center p-2 transition-colors bg-black/0 hover:bg-black/10 dark:(text-white)!`
 );
 
-const Content = tw(MainSize)`my-16`;
+const Content = tw(MainSize)`py-8`;
 
 export default Layout;

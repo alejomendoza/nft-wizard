@@ -5,9 +5,7 @@ import MetadataForm from 'src/components/MetadataForm';
 
 const NFTCreate = () => {
   return (
-    <div tw="my-8 space-y-8">
-      <h1 tw="text-2xl font-bold mb-4 text-center">Create NFT</h1>
-
+    <div tw="space-y-8">
       <StyledSection>
         <StyledTitle>1. IPFS File Upload</StyledTitle>
         <FileUpload />
