@@ -126,7 +126,8 @@ const MetadataForm = () => {
 };
 
 const StyledLabel = tw.label`block space-y-2`;
-const StyledInput = tw.input`w-full p-2 bg-gray-100 rounded`;
+const StyledInput = tw.input`w-full p-2 bg-black/10 rounded-sm`;
+
 const StyledTextbox = styled(StyledInput).attrs({
   as: 'textarea',
   rows: 3,

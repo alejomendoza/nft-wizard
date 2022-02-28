@@ -76,7 +76,7 @@ const NavLink = styled(Link).attrs({
   style: ({ isActive }) =>
     isActive ? tw`text-stellar-violet bg-black/20` : {},
 })(
-  tw`block rounded flex-1 text-center p-2 transition-colors bg-black/0 hover:bg-black/10 dark:(text-white)!`
+  tw`block rounded-sm flex-1 text-center p-2 transition-colors bg-black/0 hover:bg-black/10 dark:(text-white)!`
 );
 
 const Content = tw(MainSize)`py-8`;

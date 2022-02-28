@@ -49,7 +49,7 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
   }
 
   return (
-    <div tw="rounded-lg border-2 border-black/20 [h2, th, td]:(px-4 py-4 sm:px-8) shadow">
+    <div tw="rounded-sm border-2 border-black/20 [h2, th, td]:(px-4 py-4 sm:px-8) shadow">
       <h2 tw="font-bold flex items-center justify-between">
         <span>Your NFTs</span>
         <StyledLink to="create">
@@ -115,7 +115,7 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
 };
 
 const StyledLink = styled(Link)(
-  tw`bg-blue text-white rounded px-4 py-1 flex items-center gap-1`
+  tw`bg-brand-primary text-white rounded-sm px-4 py-1 flex items-center gap-2`
 );
 
 export default NFTList;

@@ -58,7 +58,7 @@ function FileUpload() {
           onInput={dropFile}
           disabled={isLoading || fileInfo.isUploaded}
         />
-        <p tw="flex items-center justify-center rounded bg-green px-6 py-2 text-white">
+        <p tw="flex items-center justify-center rounded-sm bg-green px-6 py-2 text-white">
           <span tw="text-2xl mr-2">📁</span> Add File
         </p>
       </label>
