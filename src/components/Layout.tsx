@@ -8,6 +8,7 @@ import { walletAtom } from 'src/state/atoms';
 import Spinner from './icons/Spinner';
 import StellarLogoFull from './icons/StellarLogoFull';
 import { WalletMenu } from './Wallet';
+import Footer from './Footer';
 
 const Layout = () => {
   return (
@@ -17,7 +18,7 @@ const Layout = () => {
           <div tw="flex items-center gap-2 text-xl">
             <StellarLogoFull />
             <div tw="border-l h-full border-gray-300" />
-            <p>nw</p>
+            <p>NFT Wizard</p>
           </div>
           <WalletMenu />
         </HeaderContent>
@@ -28,6 +29,7 @@ const Layout = () => {
       <Content>
         <Outlet />
       </Content>
+      <Footer />
     </MainLayout>
   );
 };
