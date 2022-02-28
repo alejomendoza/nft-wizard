@@ -3,6 +3,7 @@ import { RecoilRoot } from 'recoil';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { GlobalStyles } from 'twin.macro';
+import '@fontsource/ibm-plex-sans';
 
 import './utils/polyfills';
 

@@ -14,9 +14,8 @@
   },
   "dependencies": {
     "@albedo-link/intent": "^0.11.2",
+    "@fontsource/ibm-plex-sans": "^4.5.4",
     "@headlessui/react": "^1.4.3",
-    "@heroicons/react": "^1.0.5",
-    "@types/sha.js": "^2.4.0",
     "blob-to-hash": "^0.0.1",
     "buffer": "^6.0.3",
     "clipboard-polyfill": "^4.0.0-rc1",
@@ -35,6 +34,7 @@
   "devDependencies": {
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
+    "@types/sha.js": "^2.4.0",
     "@types/styled-components": "^5.1.22",
     "@vitejs/plugin-react": "^1.0.7",
     "autoprefixer": "^10.4.2",
