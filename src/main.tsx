@@ -2,13 +2,14 @@ import ReactDOM from 'react-dom';
 import { RecoilRoot } from 'recoil';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { GlobalStyles } from 'twin.macro';
+
 import '@fontsource/ibm-plex-sans';
 
 import './utils/polyfills';
 
 import './index.css';
 import App from './App';
+import BaseStyles from 'src/styles/BaseStyles';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, retry: false } },
@@ -16,7 +17,7 @@ const queryClient = new QueryClient({
 
 ReactDOM.render(
   <RecoilRoot>
-    <GlobalStyles />
+    <BaseStyles />
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <App />

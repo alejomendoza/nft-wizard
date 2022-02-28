@@ -6,7 +6,7 @@ const StellarLogoFull = (props: any) => {
       width="4em"
       height="1em"
       viewBox="0 0 4096 1024"
-      data-color="fill"
+      fill="currentColor"
       {...props}
     >
       <title></title>

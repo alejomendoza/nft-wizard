@@ -56,3 +56,5 @@ export const fileAtom = atom<{
 });
 
 export const fileHash = selector({ key: 'fileHash', get: ({ get }) => {} });
+
+export const darkModeAtom = atom<boolean>({ key: 'darkMode', default: false });

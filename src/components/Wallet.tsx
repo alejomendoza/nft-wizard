@@ -45,7 +45,7 @@ export const WalletMenu = () => {
         <RiFileCopyFill tw="text-stellar-violet" />
       </p>
 
-      <div tw="h-full border-l border-gray-300" />
+      <div tw="h-full border-l border-current" />
 
       <p tw="text-stellar-violet hover:cursor-pointer" onClick={resetWallet}>
         Logout
