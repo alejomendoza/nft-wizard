@@ -116,7 +116,7 @@ const NFTMint = () => {
   );
 };
 
-const StyledLabel = tw.label`block`;
+const StyledLabel = tw.label`block space-y-2`;
 const StyledInput = tw.input`w-full p-2 bg-gray-100 rounded`;
 
 const IpfsData = ({ cid }: { cid: string }) => {
