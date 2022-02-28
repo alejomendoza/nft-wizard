@@ -1,16 +1,17 @@
-import { Suspense } from 'react';
 import { NavLink as Link, Outlet } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import tw, { styled } from 'twin.macro';
+import { FaSun, FaMoon } from 'react-icons/fa';
 
-import { walletAtom } from 'src/state/atoms';
+import { darkModeAtom, walletAtom } from 'src/state/atoms';
 
-import Spinner from './icons/Spinner';
 import StellarLogoFull from './icons/StellarLogoFull';
 import { WalletMenu } from './Wallet';
 import Footer from './Footer';
 
 const Layout = () => {
+  const [isDarkMode, setIsDarkMode] = useRecoilState(darkModeAtom);
+
   return (
     <MainLayout>
       <Header>
@@ -20,7 +21,15 @@ const Layout = () => {
             <div tw="border-l h-full border-gray-300" />
             <p>NFT Wizard</p>
           </div>
-          <WalletMenu />
+          <div tw="flex items-center gap-4 all-child:h-full">
+            <WalletMenu />
+            <button
+              tw="rounded-full border border-current p-2"
+              onClick={() => setIsDarkMode((oldState) => !oldState)}
+            >
+              {isDarkMode ? <FaSun /> : <FaMoon />}
+            </button>
+          </div>
         </HeaderContent>
       </Header>
 
@@ -51,22 +60,22 @@ const Nav = () => {
   );
 };
 
-const MainLayout = tw.div`min-h-screen`;
+const MainLayout = tw.div`min-h-screen transition-colors dark:(bg-background text-white)`;
 const MainSize = tw.div`max-w-4xl mx-auto`;
 
-const Header = tw.header`py-8 bg-white`;
+const Header = tw.header`py-8`;
 const HeaderContent = tw(MainSize)`flex justify-between`;
 
-const NavBar = tw.nav`sticky top-0 z-10 bg-gray-100 border border-gray-200 shadow-sm`;
+const NavBar = tw.nav`sticky top-0 z-10 border-t border-b border-black/5 bg-black/5 shadow-sm`;
 const NavMenu = tw(MainSize)`gap-2 py-4 flex justify-between`;
 
 const NavLink = styled(Link).attrs({
   style: ({ isActive }) =>
-    isActive ? tw`text-stellar-violet bg-gray-300` : {},
+    isActive ? tw`text-stellar-violet bg-black/20` : {},
 })(
-  tw`block rounded flex-1 text-center p-2 transition-colors hover:bg-gray-200`
+  tw`block rounded flex-1 text-center p-2 transition-colors bg-black/0 hover:bg-black/10 dark:(text-white)!`
 );
 
-const Content = tw(MainSize)`my-8`;
+const Content = tw(MainSize)`my-16`;
 
 export default Layout;

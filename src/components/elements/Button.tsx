@@ -27,12 +27,12 @@ const sizeStyles = Object.freeze({
 
 const ButtonBase = styled.button<ButtonBaseProps>((props) => [
   tw`flex justify-center items-center px-6 py-2 rounded-md transition-all shadow`,
-  tw`tracking-wide disabled:(cursor-not-allowed) not-disabled:hover:(bg-blue-700)`,
+  tw`tracking-wide disabled:(cursor-not-allowed filter[grayscale(.3)]) not-disabled:hover:(bg-blue-700)`,
   props.size && sizeStyles[props.size],
 ]);
 
 const ButtonPrimary = styled(ButtonBase)((props) => [
-  tw`font-semibold text-white bg-blue disabled:bg-blue-800`,
+  tw`font-semibold text-white bg-blue`,
   props.color === 'danger' && tw`bg-red disabled:bg-red-800`,
 ]);
 
