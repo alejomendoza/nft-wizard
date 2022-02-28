@@ -35,7 +35,7 @@ const Wallet = () => {
 
   return (
     <Button
-      tw="bg-transparent text-black font-normal border border-black flex-row justify-center items-center"
+      tw="bg-transparent font-normal border border-black dark:border-white text-black dark:text-white flex-row justify-center items-center"
       onClick={() => openAlbedoAuth()}
       leftIcon={() => (
         <svg
@@ -52,7 +52,7 @@ const Wallet = () => {
         </svg>
       )}
     >
-      <div>Connect with Albedo</div>
+      <p>Connect with Albedo</p>
     </Button>
   );
 };
