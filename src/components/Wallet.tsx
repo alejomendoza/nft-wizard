@@ -64,7 +64,7 @@ export const WalletMenu = () => {
   if (!publicKey) return null;
 
   return (
-    <div tw="flex items-center gap-2">
+    <div tw="flex items-center gap-2 sm:gap-4">
       <p
         onClick={() => copyText(publicKey)}
         tw="flex items-center gap-1 transition-colors hover:(cursor-pointer text-stellar-violet)"
@@ -74,7 +74,7 @@ export const WalletMenu = () => {
         <RiFileCopyFill tw="text-stellar-violet" />
       </p>
 
-      <div tw="h-4 border-l border-current mx-2" />
+      <div tw="h-full border-l border-current" />
 
       <p tw="text-stellar-violet hover:cursor-pointer" onClick={resetWallet}>
         Logout

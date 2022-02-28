@@ -49,7 +49,7 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
   }
 
   return (
-    <div tw="rounded-lg border-2 border-gray-200 [h2, th, td]:(px-4 py-4 sm:px-8) shadow">
+    <div tw="rounded-lg border-2 border-black/20 [h2, th, td]:(px-4 py-4 sm:px-8) shadow">
       <h2 tw="font-bold flex items-center justify-between">
         <span>Your NFTs</span>
         <StyledLink to="create">
@@ -57,7 +57,7 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
         </StyledLink>
       </h2>
 
-      <table tw="w-full [th]:(text-sm font-normal text-gray-500) [tr]:(border-t border-gray-200)">
+      <table tw="w-full [th]:(text-sm font-normal text-gray-500) [tr]:(border-t border-black/20)">
         <thead>
           <tr>
             <th scope="col" align="left">

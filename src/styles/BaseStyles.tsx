@@ -1,8 +1,13 @@
+import { useEffect } from 'react';
+import { createGlobalStyle } from 'styled-components';
 import { useRecoilValue } from 'recoil';
-import { GlobalStyles } from 'twin.macro';
+import tw, { GlobalStyles } from 'twin.macro';
 
 import { darkModeAtom } from 'src/state/atoms';
-import { useEffect } from 'react';
+
+const CustomStyles = createGlobalStyle({
+  body: tw`dark:(bg-background text-white)`,
+});
 
 const BaseStyles = () => {
   const isDarkMode = useRecoilValue(darkModeAtom);
@@ -15,7 +20,12 @@ const BaseStyles = () => {
     }
   }, [isDarkMode]);
 
-  return <GlobalStyles />;
+  return (
+    <>
+      <CustomStyles />
+      <GlobalStyles />
+    </>
+  );
 };
 
 export default BaseStyles;
