@@ -35,6 +35,8 @@ module.exports = {
         brand: {
           DEFAULT: '#5332e6',
           hover: '#937eef',
+          primary: '#3e1bdb',
+          primaryhover: '#241080',
         },
         background: {
           DEFAULT: '#292d3e',
