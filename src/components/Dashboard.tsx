@@ -1,6 +1,7 @@
-import { Route, Routes } from 'react-router-dom';
+import { Suspense } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import Spinner from './icons/Spinner';
 
-import Layout from './Layout';
 import NFTClaim from './NFTClaim';
 import NFTCreate from './NFTCreate';
 import NFTList from './NFTList';
@@ -8,14 +9,15 @@ import NFTMint from './NFTMint';
 
 const Dashboard = () => {
   return (
-    <Routes>
-      <Route element={<Layout />}>
+    <Suspense fallback={<Spinner />}>
+      <Routes>
         <Route index element={<NFTList />} />
         <Route path="create" element={<NFTCreate />} />
         <Route path="mint" element={<NFTMint />} />
         <Route path="claim" element={<NFTClaim />} />
-      </Route>
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 };
 

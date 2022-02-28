@@ -22,9 +22,9 @@ export const submitTransaction = async (xdr: string) => {
 };
 
 export const getAccount = async (publicKey: string) => {
-  return await fetch(
-    getConfig().horizonUrl + `/accounts/?sponsor=${publicKey}`
-  ).then(handleResponse);
+  return await fetch(getConfig().horizonUrl + `/accounts/${publicKey}`).then(
+    handleResponse
+  );
 };
 
 export const getSponsoredAccounts = async (sponsor: string) => {
@@ -136,6 +136,7 @@ export const mintNFT = async (
 
   const asset = new Asset(ipfsMetadata.code, issuer);
 
+  console.log(account);
   const txBuilder = new TransactionBuilder(
     new Account(account.id, account.sequence),
     {

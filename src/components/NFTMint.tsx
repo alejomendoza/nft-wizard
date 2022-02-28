@@ -10,12 +10,12 @@ import Button from './elements/Button';
 import { getMetadata } from 'src/utils';
 import { getConfig } from 'src/utils/stellar/config';
 import { mintNFT, getAccount } from 'src/utils/stellar';
-import { userAtom } from 'src/state/atoms';
+import { walletAtom } from 'src/state/atoms';
 
 import Spinner from './icons/Spinner';
 
 const NFTMint = () => {
-  const user = useRecoilValue(userAtom);
+  const { publicKey } = useRecoilValue(walletAtom);
   const { state } = useLocation() as any;
   const [issuer, setIssuer] = useState('');
   const [cid, setCid] = useState('');
@@ -57,12 +57,12 @@ const NFTMint = () => {
   const handleMint = async () => {
     setIsMinting(true);
     try {
-      const xdr = await mintNFT(user?.account_id!, issuer, cid, destination);
+      const xdr = await mintNFT(publicKey, issuer, cid, destination);
       await albedo.tx({
         xdr,
         network: getConfig().network,
         submit: true,
-        pubkey: user?.account_id!,
+        pubkey: publicKey,
       });
     } catch (e) {
       console.log(e);

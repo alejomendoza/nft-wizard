@@ -1,5 +1,4 @@
 import { atom, RecoilState, DefaultValue, selector } from 'recoil';
-import { User } from 'src/types';
 
 const localStorageEffect =
   (key: string) =>
@@ -35,16 +34,11 @@ const localStorageEffect =
     };
   };
 
-export const loadingUserAtom = atom({
-  key: 'loading_user',
-  default: false,
-}) as RecoilState<boolean>;
-
-export const userAtom = atom({
-  key: 'user',
-  default: null,
-  effects_UNSTABLE: [localStorageEffect('nu:current_user')],
-}) as RecoilState<null | User>;
+export const walletAtom = atom({
+  key: 'wallet',
+  default: { publicKey: '' },
+  effects_UNSTABLE: [localStorageEffect('nw:wallet')],
+});
 
 export const uploadingErrorAtom = atom({
   key: 'uploading_error',

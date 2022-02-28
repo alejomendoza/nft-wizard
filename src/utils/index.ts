@@ -1,5 +1,7 @@
 import blobToHash from 'blob-to-hash';
 import { toast } from 'react-toastify';
+import * as clipboard from 'clipboard-polyfill/text';
+
 import { Metadata } from 'src/types';
 
 export const isDev = import.meta.env.VITE_WEB_ENV !== 'production';
@@ -95,3 +97,7 @@ export const truncateMiddle = (text: string, maxLength: number) => {
     text.substring(text.length - maxLength / 2)
   );
 };
+
+export function copyText(text: string) {
+  clipboard.writeText(text);
+}

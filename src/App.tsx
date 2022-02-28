@@ -1,20 +1,26 @@
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useRecoilValue } from 'recoil';
 import { ReactQueryDevtools } from 'react-query/devtools';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import { userAtom } from './state/atoms';
+import { walletAtom } from './state/atoms';
 
 import Login from 'src/components/Login';
 import Dashboard from 'src/components/Dashboard';
+import Layout from 'src/components/Layout';
 
 function App() {
-  const user = useRecoilValue(userAtom);
+  const { publicKey } = useRecoilValue(walletAtom);
 
   return (
     <div>
-      {user ? <Dashboard /> : <Login />}
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/*" element={publicKey ? <Dashboard /> : <Login />} />
+        </Route>
+      </Routes>
 
       <ToastContainer autoClose={10000} />
       <ReactQueryDevtools />

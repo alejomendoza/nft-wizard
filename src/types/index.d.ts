@@ -1,5 +1,5 @@
-export type User = {
-  account_id: string;
+export type Wallet = {
+  publicKey: string;
 };
 
 export type Metadata = {

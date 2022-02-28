@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import albedo from '@albedo-link/intent';
 import 'twin.macro';
 
-import { userAtom } from 'src/state/atoms';
+import { walletAtom } from 'src/state/atoms';
 import { getSponsoredClaimableBalances } from 'src/utils/stellar';
 import { handleResponse, truncateMiddle } from 'src/utils';
 import { getConfig } from 'src/utils/stellar/config';
@@ -11,23 +11,23 @@ import { getConfig } from 'src/utils/stellar/config';
 import Button from './elements/Button';
 
 const NFTClaim = () => {
-  const user = useRecoilValue(userAtom)!;
+  const { publicKey } = useRecoilValue(walletAtom);
 
   const claimsQuery = useQuery(
-    [user.account_id, 'claimable_balances'],
-    () => getSponsoredClaimableBalances(user.account_id, user.account_id),
+    [publicKey, 'claimable_balances'],
+    () => getSponsoredClaimableBalances(publicKey, publicKey),
     { suspense: true, select: (data) => data._embedded.records }
   );
 
   const handleClaim = async (balanceId: string) => {
     try {
       const { xdr } = await fetch(
-        `https://claim-nft-endpoint-quhceeea5030.runkit.sh/?student=${user.account_id}&balanceId=${balanceId}`
+        `https://claim-nft-endpoint-quhceeea5030.runkit.sh/?student=${publicKey}&balanceId=${balanceId}`
       ).then(handleResponse);
 
       await albedo.tx({
         xdr,
-        pubkey: user.account_id,
+        pubkey: publicKey,
         network: getConfig().network,
         submit: true,
       });

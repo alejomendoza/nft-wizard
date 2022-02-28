@@ -8,7 +8,7 @@ import tw, { styled } from 'twin.macro';
 import shajs from 'sha.js';
 
 import Button from 'src/components/elements/Button';
-import { fileAtom, userAtom } from 'src/state/atoms';
+import { fileAtom, walletAtom } from 'src/state/atoms';
 import { createNFT, submitTransaction } from 'src/utils/stellar';
 import { ipfsProtocol, uploadNFTMetadata } from 'src/utils';
 import { getConfig } from 'src/utils/stellar/config';
@@ -28,12 +28,12 @@ const MetadataForm = () => {
   });
 
   const fileInfo = useRecoilValue(fileAtom);
-  const user = useRecoilValue(userAtom);
+  const { publicKey } = useRecoilValue(walletAtom);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data: FormData) => {
-    if (!user || !fileInfo.file) return;
+    if (!publicKey || !fileInfo.file) return;
     setIsLoading(true);
 
     const { name, code, description } = data;
@@ -58,13 +58,7 @@ const MetadataForm = () => {
 
     const metadataCid = await uploadNFTMetadata(nftMetadata);
 
-    const xdr = await createNFT(
-      user.account_id,
-      keypair,
-      code,
-      domain,
-      metadataCid
-    );
+    const xdr = await createNFT(publicKey, keypair, code, domain, metadataCid);
 
     try {
       const { signed_envelope_xdr } = await albedo.tx({

@@ -7,23 +7,13 @@ module.exports = {
     },
     extend: {
       colors: {
-        yolk: {
-          DEFAULT: '#ffa51e',
-        },
-        ochre: {
-          DEFAULT: '#ff5500',
-        },
-        violet: {
-          DEFAULT: '#7d00ff',
-        },
-        moss: {
-          DEFAULT: '#00aa46',
-        },
-        coal: {
-          DEFAULT: '#000000',
-        },
-        cloud: {
-          DEFAULT: '#e1e1e1',
+        stellar: {
+          yolk: '#ffa51e',
+          ochre: '#ff5500',
+          violet: '#7d00ff',
+          moss: '#00aa46',
+          coal: '#000000',
+          cloud: '#e1e1e1',
         },
         blue: {
           DEFAULT: '#2563EB',
