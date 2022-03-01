@@ -69,12 +69,11 @@ const MainSize = tw.div`max-w-4xl mx-auto px-4`;
 const Header = tw.header`py-8`;
 const HeaderContent = tw(MainSize)`flex flex-wrap justify-between gap-4`;
 
-const NavBar = tw.nav`sticky top-0 z-10 border-t border-b border-black/5 bg-black/5 shadow-sm`;
+const NavBar = tw.nav`sticky top-0 z-10 border border-background-tertiary bg-background-secondary shadow-sm`;
 const NavMenu = tw(MainSize)`gap-2 py-4 flex justify-between`;
 
 const NavLink = styled(Link).attrs({
-  style: ({ isActive }) =>
-    isActive ? tw`text-stellar-violet bg-black/20` : {},
+  style: ({ isActive }) => (isActive ? tw`bg-black/10` : {}),
 })(
   tw`block rounded-sm flex-1 text-center p-2 transition-colors bg-black/0 hover:bg-black/10 dark:(text-white)!`
 );

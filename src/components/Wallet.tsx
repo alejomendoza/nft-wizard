@@ -35,7 +35,6 @@ const Wallet = () => {
 
   return (
     <Button
-      tw="bg-transparent font-normal border border-black dark:border-white text-black dark:text-white flex-row justify-center items-center"
       onClick={() => openAlbedoAuth()}
       leftIcon={() => (
         <svg
@@ -67,16 +66,16 @@ export const WalletMenu = () => {
     <div tw="flex items-center gap-2 sm:gap-4">
       <p
         onClick={() => copyText(publicKey)}
-        tw="flex items-center gap-1 transition-colors hover:(cursor-pointer text-stellar-violet)"
+        tw="flex items-center gap-1 transition-colors hover:(cursor-pointer text-primary)"
       >
         <HiKey />
         {truncateMiddle(publicKey, 8)}
-        <RiFileCopyFill tw="text-stellar-violet" />
+        <RiFileCopyFill tw="text-primary" />
       </p>
 
       <div tw="h-full border-l border-current" />
 
-      <p tw="text-stellar-violet hover:cursor-pointer" onClick={resetWallet}>
+      <p tw="text-text-link hover:cursor-pointer" onClick={resetWallet}>
         Logout
       </p>
     </div>

@@ -27,13 +27,13 @@ const sizeStyles = Object.freeze({
 
 const ButtonBase = styled.button<ButtonBaseProps>((props) => [
   tw`flex justify-center items-center px-6 py-2 rounded-sm transition-all shadow`,
-  tw`tracking-wide disabled:(cursor-not-allowed filter[grayscale(.3)]) not-disabled:hover:(bg-brand-primaryhover)`,
+  tw`tracking-wide disabled:(cursor-not-allowed filter[grayscale(.5)]) `,
   props.size && sizeStyles[props.size],
 ]);
 
 const ButtonPrimary = styled(ButtonBase)((props) => [
-  tw`font-semibold text-white bg-brand-primary`,
-  props.color === 'danger' && tw`bg-red disabled:bg-red-800`,
+  tw`font-semibold text-white bg-primary not-disabled:hover:(bg-primary-hover)`,
+  props.color === 'danger' && tw`bg-error not-disabled:hover:(bg-red-700)`,
 ]);
 
 const Button: FunctionComponent<ButtonProps> = forwardRef((props, ref) => {

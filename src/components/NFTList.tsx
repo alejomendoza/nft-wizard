@@ -115,7 +115,7 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
 };
 
 const StyledLink = styled(Link)(
-  tw`bg-brand-primary text-white rounded-sm px-4 py-1 flex items-center gap-2`
+  tw`bg-primary text-white rounded-sm px-4 py-1 flex items-center gap-2`
 );
 
 export default NFTList;
