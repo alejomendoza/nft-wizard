@@ -35,7 +35,7 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
         data._embedded.records.map(
           ({ id, last_modified_time, data: { ipfshash } }: any) => ({
             id,
-            ipfshash: Buffer.from(ipfshash, 'base64').toString(),
+            ipfshash: Buffer.from(ipfshash || '', 'base64').toString(),
             last_modified: last_modified_time,
           })
         ) as { id: string; ipfshash: string; last_modified: string }[],
