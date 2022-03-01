@@ -32,13 +32,13 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
     {
       suspense: true,
       select: (data) =>
-        data._embedded.records.map(
-          ({ id, last_modified_time, data: { ipfshash } }: any) => ({
+        data._embedded.records
+          .filter(({ data: { ipfshash } }: any) => !!ipfshash)
+          .map(({ id, last_modified_time, data: { ipfshash } }: any) => ({
             id,
             ipfshash: Buffer.from(ipfshash || '', 'base64').toString(),
             last_modified: last_modified_time,
-          })
-        ) as { id: string; ipfshash: string; last_modified: string }[],
+          })) as { id: string; ipfshash: string; last_modified: string }[],
     }
   );
 
@@ -49,7 +49,7 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
   }
 
   return (
-    <div tw="rounded-sm border-2 border-black/20 [h2, th, td]:(px-4 py-4 sm:px-8) shadow">
+    <div tw="rounded-sm border-2 border-background-tertiary [h2, th, td]:(px-4 py-4 sm:px-8) shadow">
       <h2 tw="font-bold flex items-center justify-between">
         <span>Your NFTs</span>
         <StyledLink to="create">
@@ -57,7 +57,7 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
         </StyledLink>
       </h2>
 
-      <table tw="w-full [th]:(text-sm font-normal text-gray-500) [tr]:(border-t border-black/20)">
+      <table tw="w-full [th]:(text-sm font-normal text-gray-500) [tr]:(border-t border-background-tertiary)">
         <thead>
           <tr>
             <th scope="col" align="left">

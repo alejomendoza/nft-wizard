@@ -5,11 +5,11 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
-import { fileAtom, uploadingErrorAtom } from 'src/state/atoms';
 import 'twin.macro';
 
 import upload from 'src/assets/upload.svg';
 
+import { fileAtom, uploadingErrorAtom } from 'src/state/atoms';
 import Button from 'src/components/elements/Button';
 import { hashFile, uploadFile } from 'src/utils';
 
@@ -21,9 +21,13 @@ function FileUpload() {
   const setProgress = useSetRecoilState(progressAtom);
   const isLoading = useRecoilValue(progressSelector);
 
-  const dropFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const dropFile = async (e: any) => {
     e.preventDefault();
-    const file = e.target.files?.[0];
+    e.stopPropagation();
+
+    const file = e.target?.files
+      ? e.target.files[0]
+      : e.dataTransfer.items[0].getAsFile();
 
     if (file && file.type === 'image/png') {
       const hash = await hashFile(file);
@@ -51,29 +55,40 @@ function FileUpload() {
 
   return (
     <div tw="space-y-4">
-      <label tw="cursor-pointer">
+      <label
+        tw="cursor-pointer"
+        onDrop={dropFile}
+        onDragOver={(e) => e.preventDefault()}
+        onDragLeave={(e) => e.preventDefault()}
+      >
         <input
-          tw="invisible opacity-0 hidden disabled:sibling:(filter[grayscale(0.5)] cursor-not-allowed)"
+          tw="invisible opacity-0 hidden inset-0 disabled:sibling:(bg-background-tertiary cursor-not-allowed)"
           type="file"
           multiple={false}
           accept="image/png"
           onInput={dropFile}
           disabled={isLoading || fileInfo.isUploaded}
         />
-        <div tw="flex flex-col gap-8 items-center rounded border-4 border-dashed p-8">
+        <div tw="flex flex-col gap-8 items-center rounded border-4 border-dashed p-8 bg-background-secondary">
           <img src={upload} tw="max-w-[12rem]" />
-          <p tw="font-bold">Add File</p>
+          <p tw="font-bold">
+            {fileInfo.isUploaded
+              ? '✓ Uploaded'
+              : fileInfo.file
+              ? '✓ Ready For Upload'
+              : '+ Add File'}
+          </p>
         </div>
       </label>
 
       <div tw="space-y-4">
         <div>
           <h2 tw="font-bold">File Info:</h2>
-          {fileInfo.file ? (
-            <p>{`Name: ${fileInfo.file.name}`}</p>
-          ) : (
-            <p>Please add a file to upload.</p>
-          )}
+          <p>
+            {fileInfo.file
+              ? `Name: ${fileInfo.file.name}`
+              : 'Please add a file to upload.'}
+          </p>
         </div>
 
         <Button
@@ -82,8 +97,9 @@ function FileUpload() {
           isLoading={isLoading}
           onClick={() => handleUpload()}
           tw="ml-auto"
+          loadingText="Uploading"
         >
-          {fileInfo.isUploaded ? '✔️ Uploaded' : 'Upload'}
+          {fileInfo.isUploaded ? '✓ Uploaded' : 'Upload'}
         </Button>
       </div>
     </div>

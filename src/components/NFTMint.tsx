@@ -95,7 +95,7 @@ const NFTMint = () => {
         <div tw="overflow-auto rounded-sm">
           <p>NFT Metadata</p>
           <pre
-            tw="text-xs leading-6 p-4 bg-black/10"
+            tw="text-xs leading-6 p-4 bg-background-tertiary"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify(ipfsQuery.data, null, 2),
             }}
@@ -117,7 +117,7 @@ const NFTMint = () => {
 };
 
 const StyledLabel = tw.label`block space-y-2`;
-const StyledInput = tw.input`w-full p-2 bg-black/10 rounded-sm`;
+const StyledInput = tw.input`w-full p-2 bg-background-tertiary rounded-sm`;
 
 const IpfsData = ({ cid }: { cid: string }) => {
   const ipfsQuery = useQuery(['mint', cid], () => getMetadata(cid), {
