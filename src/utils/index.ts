@@ -11,7 +11,7 @@ export const baseUrl = isDev
 export const ipfsProtocol = 'ipfs://';
 const nftStorageApi = 'https://api.nft.storage';
 const nftStorageApiKey = import.meta.env.VITE_NFT_STORAGE_API_KEY;
-const cloudflareGateway = 'https://cloudflare-ipfs.com/ipfs';
+export const cloudflareGateway = 'https://cloudflare-ipfs.com/ipfs';
 
 export const getMetadata = async (cid: String) => {
   return fetch(cloudflareGateway + `/${cid}`).then(handleResponse);
