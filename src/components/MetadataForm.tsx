@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 import albedo from '@albedo-link/intent';
 import { Keypair } from 'stellar-base';
 import { useRecoilValue } from 'recoil';
+import { toast } from 'react-toastify';
 import tw, { styled } from 'twin.macro';
 import shajs from 'sha.js';
 
@@ -17,6 +19,7 @@ type FormData = { name: string; code: string; description: string };
 
 const MetadataForm = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -68,23 +71,26 @@ const MetadataForm = () => {
       await submitTransaction(signed_envelope_xdr);
 
       queryClient.invalidateQueries('sponsored');
+      toast.success('Successfully uploaded NFT.');
+      navigate('/');
     } catch (err) {
       console.log(err);
+      toast.error('Failed to upload.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <form tw="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-      <StyledLabel>
+    <StyledForm onSubmit={handleSubmit(onSubmit)}>
+      <label>
         <p>Name</p>
-        <StyledInput {...register('name', { required: true })} />
-      </StyledLabel>
+        <input {...register('name', { required: true })} />
+      </label>
 
-      <StyledLabel>
+      <label>
         <p>Asset Code</p>
-        <StyledInput
+        <input
           {...register('code', {
             required: true,
             pattern: /^[a-zA-Z0-9]{1,12}$/,
@@ -95,43 +101,37 @@ const MetadataForm = () => {
             Asset code must be alphanumeric and 12 characters max.
           </StyledError>
         )}
-      </StyledLabel>
+      </label>
 
-      <StyledLabel>
+      <label>
         <p>Description</p>
-        <StyledTextbox {...register('description', { required: true })} />
-      </StyledLabel>
+        <textarea rows={3} {...register('description', { required: true })} />
+      </label>
 
-      <StyledLabel>
+      <label>
         <p>File Hash</p>
-        <StyledInput readOnly disabled value={fileInfo.hash} />
-      </StyledLabel>
+        <input readOnly disabled value={fileInfo.hash} />
+      </label>
 
-      <StyledLabel>
+      <label>
         <p>IPFS CID</p>
-        <StyledInput readOnly disabled value={fileInfo.cid} />
-      </StyledLabel>
+        <input readOnly disabled value={fileInfo.cid} />
+      </label>
 
       <Button
         disabled={!isValid || !fileInfo.isUploaded}
         tw="ml-auto"
         type="submit"
         isLoading={isLoading}
-        loadingText="Submitting"
+        loadingText="Uploading"
       >
-        Submit
+        Upload
       </Button>
-    </form>
+    </StyledForm>
   );
 };
 
-const StyledLabel = tw.label`block space-y-2`;
-const StyledInput = tw.input`w-full p-2 bg-background-tertiary rounded-sm`;
-
-const StyledTextbox = styled(StyledInput).attrs({
-  as: 'textarea',
-  rows: 3,
-})``;
+const StyledForm = tw.form`space-y-4 [label]:(block space-y-2 [input, textarea]:(w-full p-2 bg-background-tertiary rounded-sm))`;
 const StyledError = tw.p`text-sm text-red-500`;
 
 export default MetadataForm;

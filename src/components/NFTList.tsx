@@ -52,8 +52,8 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
     <div tw="rounded-sm border-2 border-background-tertiary [h2, th, td]:(px-4 py-4 sm:px-8) shadow">
       <h2 tw="font-bold flex items-center justify-between">
         <span>Your NFTs</span>
-        <StyledLink to="create">
-          <FaRegPlusSquare /> <span>Create</span>
+        <StyledLink to="upload">
+          <FaRegPlusSquare /> <span>Upload</span>
         </StyledLink>
       </h2>
 

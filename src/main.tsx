@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom';
 import { RecoilRoot } from 'recoil';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
-
+import 'react-toastify/dist/ReactToastify.css';
 import '@fontsource/ibm-plex-sans';
 
 import './utils/polyfills';

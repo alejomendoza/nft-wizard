@@ -22,7 +22,12 @@ function App() {
         </Route>
       </Routes>
 
-      <ToastContainer autoClose={10000} />
+      <ToastContainer
+        autoClose={4000}
+        position="bottom-right"
+        pauseOnHover={false}
+        theme="colored"
+      />
       <ReactQueryDevtools />
     </div>
   );

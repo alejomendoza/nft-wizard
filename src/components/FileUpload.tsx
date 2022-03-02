@@ -83,7 +83,7 @@ function FileUpload() {
 
       <div tw="space-y-4">
         <div>
-          <h2 tw="font-bold">File Info:</h2>
+          <h3 tw="font-bold">File Info:</h3>
           <p>
             {fileInfo.file
               ? `Name: ${fileInfo.file.name}`
