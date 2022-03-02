@@ -9,13 +9,15 @@ import 'twin.macro';
 
 import upload from 'src/assets/upload.svg';
 
-import { fileAtom, uploadingErrorAtom } from 'src/state/atoms';
+import { fileAtom } from 'src/state/atoms';
 import Button from 'src/components/elements/Button';
 import { hashFile, uploadFile } from 'src/utils';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import ErrorDisplay from './elements/ErrorDisplay';
 
 function FileUpload() {
-  const [uploadingError, setUploadingError] =
-    useRecoilState(uploadingErrorAtom);
+  const [error, setError] = useState<any>(null);
 
   const [fileInfo, setFileInfo] = useRecoilState(fileAtom);
   const setProgress = useSetRecoilState(progressAtom);
@@ -45,8 +47,10 @@ function FileUpload() {
           cid: cid,
           isUploaded: true,
         }));
+        toast.success('File uploaded to IPFS.');
       } catch (err) {
-        setUploadingError(err as any);
+        setError(err);
+        toast.error('Failed to upload to IPFS.');
       } finally {
         setProgress((oldState) => ({ ...oldState, isLoading: false }));
       }
@@ -90,6 +94,8 @@ function FileUpload() {
               : 'Please add a file to upload.'}
           </p>
         </div>
+
+        {error && <ErrorDisplay error={error} />}
 
         <Button
           type="submit"

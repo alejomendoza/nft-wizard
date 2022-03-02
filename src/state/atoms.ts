@@ -40,11 +40,6 @@ export const walletAtom = atom({
   effects_UNSTABLE: [localStorageEffect('nw:wallet')],
 });
 
-export const uploadingErrorAtom = atom({
-  key: 'uploading_error',
-  default: '',
-}) as RecoilState<string>;
-
 export const fileAtom = atom<{
   isUploaded: boolean;
   file: File | null;

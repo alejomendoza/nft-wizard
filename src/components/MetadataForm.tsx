@@ -14,6 +14,7 @@ import { fileAtom, walletAtom } from 'src/state/atoms';
 import { createNFT, submitTransaction } from 'src/utils/stellar';
 import { ipfsProtocol, uploadNFTMetadata } from 'src/utils';
 import { getConfig } from 'src/utils/stellar/config';
+import ErrorDisplay from 'src/components/elements/ErrorDisplay';
 
 type FormData = { name: string; code: string; description: string };
 
@@ -34,6 +35,7 @@ const MetadataForm = () => {
   const { publicKey } = useRecoilValue(walletAtom);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<any>(null);
 
   const onSubmit = async (data: FormData) => {
     if (!publicKey || !fileInfo.file) return;
@@ -74,7 +76,7 @@ const MetadataForm = () => {
       toast.success('Successfully uploaded NFT.');
       navigate('/');
     } catch (err) {
-      console.log(err);
+      setError(err);
       toast.error('Failed to upload.');
     } finally {
       setIsLoading(false);
@@ -117,6 +119,8 @@ const MetadataForm = () => {
         <p>IPFS CID</p>
         <input readOnly disabled value={fileInfo.cid} />
       </label>
+
+      {error && <ErrorDisplay error={error} />}
 
       <Button
         disabled={!isValid || !fileInfo.isUploaded}

@@ -17,8 +17,11 @@ import { FaLink, FaCopy, FaDownload } from 'react-icons/fa';
 import { cloudflareGateway } from 'src/utils';
 
 import Spinner from './icons/Spinner';
+import ErrorDisplay from './elements/ErrorDisplay';
 
 const NFTMint = () => {
+  const [error, setError] = useState<any>(null);
+
   const { publicKey } = useRecoilValue(walletAtom);
   const { state } = useLocation() as any;
   const [issuer, setIssuer] = useState('');
@@ -72,7 +75,7 @@ const NFTMint = () => {
 
       toast.success('Successfully minted.');
     } catch (e) {
-      console.log(e);
+      setError(e);
       toast.error('Failed to mint.');
     } finally {
       setIsMinting(false);
@@ -102,17 +105,19 @@ const NFTMint = () => {
             value={destination}
           />
         </label>
-      </StyledSection>
 
-      <Button
-        disabled={!isReady}
-        tw="ml-auto"
-        loadingText="Minting"
-        isLoading={isMinting}
-        onClick={handleMint}
-      >
-        Mint
-      </Button>
+        {error && <ErrorDisplay error={error} />}
+
+        <Button
+          disabled={!isReady}
+          tw="ml-auto"
+          loadingText="Minting"
+          isLoading={isMinting}
+          onClick={handleMint}
+        >
+          Mint
+        </Button>
+      </StyledSection>
 
       {ipfsQuery.data && (
         <StyledSection>
