@@ -2,9 +2,8 @@ import 'twin.macro';
 
 export const Footer = () => {
   return (
-    <footer tw="mx-auto max-w-4xl py-12 flex justify-between relative">
-      <div tw="border-t absolute w-full border-black dark:border-white"></div>
-      <div tw="space-x-4 mt-2">
+    <footer tw="mx-auto max-w-4xl py-4 my-12 flex justify-between border-t border-border">
+      <div tw="space-x-4">
         <a href="https://www.stellar.org/terms-of-service" target="_blank">
           Terms of Service
         </a>
@@ -12,7 +11,8 @@ export const Footer = () => {
           Privacy Policy
         </a>
       </div>
-      <div tw="flex justify-end items-center space-x-2 mt-2">
+
+      <div tw="flex items-center space-x-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"

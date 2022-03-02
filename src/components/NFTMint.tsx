@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import albedo from '@albedo-link/intent';
@@ -11,7 +11,7 @@ import tw from 'twin.macro';
 import Button from './elements/Button';
 import { copyText, getMetadata } from 'src/utils';
 import { getConfig } from 'src/utils/stellar/config';
-import { mintNFT, getAccount } from 'src/utils/stellar';
+import { mintNFT } from 'src/utils/stellar';
 import { walletAtom } from 'src/state/atoms';
 import { FaLink, FaCopy, FaDownload } from 'react-icons/fa';
 import { cloudflareGateway } from 'src/utils';
@@ -20,52 +20,21 @@ import Spinner from './icons/Spinner';
 import ErrorDisplay from './elements/ErrorDisplay';
 
 const NFTMint = () => {
-  const [error, setError] = useState<any>(null);
+  const {
+    state: { issuer, ipfshash },
+  } = useLocation() as any;
 
   const { publicKey } = useRecoilValue(walletAtom);
-  const { state } = useLocation() as any;
-  const [issuer, setIssuer] = useState('');
-  const [cid, setCid] = useState('');
+
   const [destination, setDestination] = useState('');
-  const [isMinting, setIsMinting] = useState(false);
-  const timeoutRef = useRef<any>();
-
-  const accountQuery = useQuery(['mint', 'account'], () => getAccount(issuer), {
-    enabled: false,
-    onSuccess: (account) => {
-      setCid(Buffer.from(account.data?.ipfshash || '', 'base64').toString());
-    },
-  });
-
-  const ipfsQuery = useQuery(['mint', cid], () => getMetadata(cid), {
-    enabled: !!cid,
-  });
-
-  useEffect(() => {
-    if (state?.issuer && state?.ipfshash) {
-      setIssuer(state.issuer);
-      setCid(state.ipfshash);
-    }
-  }, []);
-
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const issuer = e.target.value;
-    setIssuer(issuer);
-
-    clearTimeout(timeoutRef.current);
-
-    if (StrKey.isValidEd25519PublicKey(issuer)) {
-      timeoutRef.current = setTimeout(() => {
-        accountQuery.refetch();
-      }, 1500);
-    }
-  };
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<any>(null);
 
   const handleMint = async () => {
-    setIsMinting(true);
+    setIsLoading(true);
 
     try {
-      const xdr = await mintNFT(publicKey, issuer, cid, destination);
+      const xdr = await mintNFT(publicKey, issuer, ipfshash, destination);
       await albedo.tx({
         xdr,
         network: getConfig().network,
@@ -78,14 +47,11 @@ const NFTMint = () => {
       setError(e);
       toast.error('Failed to mint.');
     } finally {
-      setIsMinting(false);
+      setIsLoading(false);
     }
   };
 
-  const isReady =
-    StrKey.isValidEd25519PublicKey(issuer) &&
-    StrKey.isValidEd25519PublicKey(destination) &&
-    ipfsQuery.data;
+  const isReady = StrKey.isValidEd25519PublicKey(destination);
 
   return (
     <div tw="space-y-4">
@@ -94,7 +60,7 @@ const NFTMint = () => {
 
         <label>
           <p>NFT Issuer</p>
-          <input placeholder="G..." value={issuer} onChange={handleInput} />
+          <input placeholder="G..." value={issuer} disabled />
         </label>
 
         <label>
@@ -112,78 +78,86 @@ const NFTMint = () => {
           disabled={!isReady}
           tw="ml-auto"
           loadingText="Minting"
-          isLoading={isMinting}
+          isLoading={isLoading}
           onClick={handleMint}
         >
           Mint
         </Button>
       </StyledSection>
 
-      {ipfsQuery.data && (
-        <StyledSection>
-          <h2>Metadata</h2>
-
-          {Object.entries(ipfsQuery.data).map(([key, value]: any) => {
-            if (key === 'url') {
-              const url = `${cloudflareGateway}/${value.replace(
-                'ipfs://',
-                ''
-              )}`;
-
-              return (
-                <label>
-                  <div tw="flex items-center gap-2">
-                    <p tw="capitalize">{key}</p>
-                    <a href={url} target="_blank">
-                      <FaLink tw="hover:text-primary" />
-                    </a>
-                  </div>
-                  <a
-                    href={url}
-                    target="_blank"
-                    tw="block cursor-pointer hover:text-primary"
-                  >
-                    <StyledInputLink value={ipfsQuery.data.url} disabled />
-                  </a>
-                </label>
-              );
-            }
-
-            return (
-              <label key={value}>
-                <p tw="capitalize">{key}</p>
-                <input value={value} disabled />
-              </label>
-            );
-          })}
-
-          <div tw="overflow-auto rounded-sm">
-            <p tw="mb-2">JSON</p>
-            <div tw="relative">
-              <div tw="absolute flex gap-2 right-2 top-2">
-                <CopyButton
-                  onClick={() =>
-                    copyText(JSON.stringify(ipfsQuery.data, null, 2))
-                  }
-                >
-                  <FaCopy />
-                </CopyButton>
-                <CopyButton onClick={() => downloadMetaJson(ipfsQuery.data)}>
-                  <FaDownload />
-                </CopyButton>
-              </div>
-
-              <pre
-                tw="text-xs leading-6 p-4 bg-background-tertiary"
-                dangerouslySetInnerHTML={{
-                  __html: JSON.stringify(ipfsQuery.data, null, 2),
-                }}
-              />
-            </div>
-          </div>
-        </StyledSection>
-      )}
+      <Suspense fallback={<Spinner />}>
+        <IpfsData cid={ipfshash} />
+      </Suspense>
     </div>
+  );
+};
+
+const IpfsData = ({ cid }: { cid: string }) => {
+  const ipfsQuery = useQuery(['mint', cid], () => getMetadata(cid), {
+    enabled: !!cid,
+    suspense: true,
+  });
+
+  if (!ipfsQuery.data) return null;
+
+  return (
+    <StyledSection>
+      <h2>Metadata</h2>
+
+      {Object.entries(ipfsQuery.data).map(([key, value]: any) => {
+        if (key === 'url') {
+          const url = `${cloudflareGateway}/${value.replace('ipfs://', '')}`;
+
+          return (
+            <label key={key}>
+              <div tw="flex items-center gap-2">
+                <p tw="capitalize">{key}</p>
+                <a href={url} target="_blank">
+                  <FaLink tw="hover:text-primary" />
+                </a>
+              </div>
+              <a
+                href={url}
+                target="_blank"
+                tw="block cursor-pointer hover:text-primary"
+              >
+                <StyledInputLink value={ipfsQuery.data.url} disabled />
+              </a>
+            </label>
+          );
+        }
+
+        return (
+          <label key={key}>
+            <p tw="capitalize">{key}</p>
+            <input value={value} disabled />
+          </label>
+        );
+      })}
+
+      <div tw="overflow-auto rounded-sm">
+        <p tw="mb-2">JSON</p>
+        <div tw="relative">
+          <div tw="absolute flex gap-2 right-2 top-2">
+            <CopyButton
+              onClick={() => copyText(JSON.stringify(ipfsQuery.data, null, 2))}
+            >
+              <FaCopy />
+            </CopyButton>
+            <CopyButton onClick={() => downloadMetaJson(ipfsQuery.data)}>
+              <FaDownload />
+            </CopyButton>
+          </div>
+
+          <pre
+            tw="text-xs leading-6 p-4 bg-background-tertiary"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(ipfsQuery.data, null, 2),
+            }}
+          />
+        </div>
+      </div>
+    </StyledSection>
   );
 };
 
@@ -202,28 +176,6 @@ const downloadMetaJson = (data: any) => {
   document.body.append(anchor);
   anchor.click();
   anchor.remove();
-};
-
-const IpfsData = ({ cid }: { cid: string }) => {
-  const ipfsQuery = useQuery(['mint', cid], () => getMetadata(cid), {
-    enabled: !!cid,
-    retry: false,
-    suspense: true,
-  });
-
-  if (!ipfsQuery.data) return null;
-
-  return (
-    <div tw="overflow-auto rounded-sm">
-      <p>NFT Metadata</p>
-      <pre
-        tw="text-xs leading-6 p-4 bg-gray-100"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(ipfsQuery.data, null, 2),
-        }}
-      />
-    </div>
-  );
 };
 
 export default NFTMint;

@@ -56,7 +56,6 @@ const Nav = () => {
       <NavMenu tw="py-4 gap-2">
         <NavLink to="/">NFTs</NavLink>
         <NavLink to="/upload">Upload</NavLink>
-        <NavLink to="/mint">Mint</NavLink>
         <NavLink to="/claim">Claim</NavLink>
       </NavMenu>
     </NavBar>

@@ -28,7 +28,8 @@ function App() {
         pauseOnHover={false}
         theme="colored"
       />
-      <ReactQueryDevtools />
+
+      {/* <ReactQueryDevtools /> */}
     </div>
   );
 }
