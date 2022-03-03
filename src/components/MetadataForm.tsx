@@ -1,22 +1,34 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 import albedo from '@albedo-link/intent';
 import { Keypair } from 'stellar-base';
 import { useRecoilValue } from 'recoil';
 import { toast } from 'react-toastify';
-import tw, { styled } from 'twin.macro';
+import tw from 'twin.macro';
 import shajs from 'sha.js';
 
 import Button from 'src/components/elements/Button';
-import { fileAtom, walletAtom } from 'src/state/atoms';
+import { walletAtom } from 'src/state/atoms';
 import { createNFT, submitTransaction } from 'src/utils/stellar';
-import { ipfsProtocol, uploadNFTMetadata } from 'src/utils';
+import {
+  hashFile,
+  ipfsProtocol,
+  uploadFileNFT,
+  uploadNFTMetadata,
+} from 'src/utils';
 import { getConfig } from 'src/utils/stellar/config';
 import ErrorDisplay from 'src/components/elements/ErrorDisplay';
+import FileUpload from './FileUpload';
 
-type FormData = { name: string; code: string; description: string };
+type FormData = {
+  name: string;
+  code: string;
+  description: string;
+  hash: string;
+  cid: string;
+};
 
 const MetadataForm = () => {
   const queryClient = useQueryClient();
@@ -26,46 +38,55 @@ const MetadataForm = () => {
     register,
     handleSubmit,
     formState: { errors, isValid },
+    control,
   } = useForm({
     mode: 'onChange',
-    defaultValues: { name: '', code: '', description: '' },
+    defaultValues: { name: '', code: '', description: '', file: null },
   });
 
-  const fileInfo = useRecoilValue(fileAtom);
   const { publicKey } = useRecoilValue(walletAtom);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
 
-  const onSubmit = async (data: FormData) => {
-    if (!publicKey || !fileInfo.file) return;
+  const onSubmit = async (formData: any) => {
+    if (!publicKey) return;
     setIsLoading(true);
 
-    const { name, code, description } = data;
-
-    const seed = shajs('sha256').update(fileInfo.cid).digest();
-    const keypair = Keypair.fromRawEd25519Seed(seed);
-
-    const issuer = keypair.publicKey();
-    const domain = 'testdomain.com';
-    const url = `${ipfsProtocol}${fileInfo.cid}`;
-
-    const nftMetadata = {
-      name,
-      code,
-      description,
-      issuer,
-      domain,
-      url,
-      hash: fileInfo.hash,
-      cid: fileInfo.cid,
-    };
-
-    const metadataCid = await uploadNFTMetadata(nftMetadata);
-
-    const xdr = await createNFT(publicKey, keypair, code, domain, metadataCid);
+    const { name, code, description, file } = formData;
 
     try {
+      const fileHash = await hashFile(file);
+      const { cid: fileCid } = await uploadFileNFT(file);
+
+      const seed = shajs('sha256').update(fileCid).digest();
+      const keypair = Keypair.fromRawEd25519Seed(seed);
+
+      const issuer = keypair.publicKey();
+      const domain = 'testdomain.com';
+      const url = `${ipfsProtocol}${fileCid}`;
+
+      const nftMetadata = {
+        name,
+        code,
+        description,
+        issuer,
+        domain,
+        url,
+        hash: fileHash,
+        cid: fileCid,
+      };
+
+      const { cid: metadataCid } = await uploadNFTMetadata(nftMetadata);
+
+      const xdr = await createNFT(
+        publicKey,
+        keypair,
+        code,
+        domain,
+        metadataCid
+      );
+
       const { signed_envelope_xdr } = await albedo.tx({
         xdr,
         network: getConfig().network,
@@ -77,7 +98,7 @@ const MetadataForm = () => {
       navigate('/');
     } catch (err) {
       setError(err);
-      toast.error('Failed to upload.');
+      toast.error('Failed to upload NFT.');
     } finally {
       setIsLoading(false);
     }
@@ -110,20 +131,17 @@ const MetadataForm = () => {
         <textarea rows={3} {...register('description', { required: true })} />
       </label>
 
-      <label>
-        <p>File Hash</p>
-        <input readOnly disabled value={fileInfo.hash} />
-      </label>
-
-      <label>
-        <p>IPFS CID</p>
-        <input readOnly disabled value={fileInfo.cid} />
-      </label>
+      <Controller
+        control={control}
+        name="file"
+        rules={{ required: true }}
+        render={({ field }) => <FileUpload {...field} />}
+      />
 
       {error && <ErrorDisplay error={error} />}
 
       <Button
-        disabled={!isValid || !fileInfo.isUploaded}
+        disabled={!isValid}
         tw="ml-auto"
         type="submit"
         isLoading={isLoading}

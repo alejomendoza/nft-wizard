@@ -1,6 +1,8 @@
 import blobToHash from 'blob-to-hash';
 import { toast } from 'react-toastify';
 import * as clipboard from 'clipboard-polyfill/text';
+import { NFTStorage } from 'nft.storage';
+import { PinStatus } from 'nft.storage/dist/src/lib/interface';
 
 import { Metadata } from 'src/types';
 
@@ -10,8 +12,11 @@ export const baseUrl = isDev
   : 'https://horizon.stellar.org';
 export const ipfsProtocol = 'ipfs://';
 const nftStorageApi = 'https://api.nft.storage';
-const nftStorageApiKey = import.meta.env.VITE_NFT_STORAGE_API_KEY;
+export const nftStorageApiKey = import.meta.env
+  .VITE_NFT_STORAGE_API_KEY as string;
 export const cloudflareGateway = 'https://cloudflare-ipfs.com/ipfs';
+
+export const nftStorageClient = new NFTStorage({ token: nftStorageApiKey });
 
 export const getMetadata = async (cid: String) => {
   return fetch(cloudflareGateway + `/${cid}`).then(handleResponse);
@@ -58,6 +63,35 @@ export const hashFile = async (file: File) => {
   );
 };
 
+export const uploadFileNFT = async (file: File | Blob) => {
+  const { cid: localCid } = await NFTStorage.encodeBlob(file);
+  let uploadStatus: { cid: string; status?: PinStatus };
+
+  try {
+    const {
+      cid,
+      pin: { status },
+    } = await nftStorageClient.check(localCid.toString());
+
+    if (status === 'failed') throw 'IPFS failed.';
+
+    uploadStatus = { cid, status };
+  } catch (e) {
+    const cid = await nftStorageClient.storeBlob(file);
+    uploadStatus = { cid };
+  }
+
+  return uploadStatus;
+};
+
+export const uploadNFTMetadata = (metadata: Metadata) => {
+  const blob = new Blob([JSON.stringify(metadata)], {
+    type: 'application/json',
+  });
+
+  return uploadFileNFT(blob);
+};
+
 export const uploadFile = (file: File | Blob) => {
   return new Promise((resolve: (value: string) => void, reject) => {
     let xhr = new XMLHttpRequest();
@@ -80,14 +114,6 @@ export const uploadFile = (file: File | Blob) => {
 
     xhr.send(file);
   });
-};
-
-export const uploadNFTMetadata = (metadata: Metadata) => {
-  const blob = new Blob([JSON.stringify(metadata)], {
-    type: 'application/json',
-  });
-
-  return uploadFile(blob);
 };
 
 export const truncateMiddle = (text: string, maxLength: number) => {

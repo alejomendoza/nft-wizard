@@ -40,16 +40,6 @@ export const walletAtom = atom({
   effects_UNSTABLE: [localStorageEffect('nw:wallet')],
 });
 
-export const fileAtom = atom<{
-  isUploaded: boolean;
-  file: File | null;
-  cid: string;
-  hash: string;
-}>({
-  key: 'file',
-  default: { isUploaded: false, file: null, cid: '', hash: '' },
-});
-
 export const fileHash = selector({ key: 'fileHash', get: ({ get }) => {} });
 
 export const darkModeAtom = atom<boolean>({ key: 'darkMode', default: false });

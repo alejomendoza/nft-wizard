@@ -1,18 +1,12 @@
 import tw from 'twin.macro';
 
-import FileUpload from 'src/components/FileUpload';
 import MetadataForm from 'src/components/MetadataForm';
 
 const NFTUpload = () => {
   return (
     <div tw="space-y-8">
       <StyledSection>
-        <h2>1. IPFS File Upload</h2>
-        <FileUpload />
-      </StyledSection>
-
-      <StyledSection>
-        <h2>2. NFT Metadata</h2>
+        <h2>Upload</h2>
         <MetadataForm />
       </StyledSection>
     </div>
