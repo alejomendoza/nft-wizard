@@ -7,16 +7,21 @@ import { PinStatus } from 'nft.storage/dist/src/lib/interface';
 import { Metadata } from 'src/types';
 
 export const isDev = import.meta.env.VITE_WEB_ENV !== 'production';
+
 export const baseUrl = isDev
   ? 'https://horizon-testnet.stellar.org'
   : 'https://horizon.stellar.org';
-export const ipfsProtocol = 'ipfs://';
-const nftStorageApi = 'https://api.nft.storage';
+
+export const institutionAccount = import.meta.env
+  .VITE_INSTITUTION_ACCOUNT as string;
+
 export const nftStorageApiKey = import.meta.env
   .VITE_NFT_STORAGE_API_KEY as string;
-export const cloudflareGateway = 'https://cloudflare-ipfs.com/ipfs';
 
+export const ipfsProtocol = 'ipfs://';
+export const cloudflareGateway = 'https://cloudflare-ipfs.com/ipfs';
 export const nftStorageClient = new NFTStorage({ token: nftStorageApiKey });
+const nftStorageApi = 'https://api.nft.storage';
 
 export const getMetadata = async (cid: String) => {
   return fetch(cloudflareGateway + `/${cid}`).then(handleResponse);
