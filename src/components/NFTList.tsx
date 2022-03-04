@@ -12,6 +12,7 @@ import { truncateMiddle } from 'src/utils';
 import Spinner from './icons/Spinner';
 import tw, { styled } from 'twin.macro';
 import { getConfig } from 'src/utils/stellar/config';
+import { StyledTable, TableContainer } from 'src/styles/TableStyles';
 
 const NFTList = () => {
   const { publicKey } = useRecoilValue(walletAtom);
@@ -49,24 +50,21 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
   }
 
   return (
-    <div tw="rounded-sm border-2 border-background-tertiary [h2, th, td]:(px-4 py-4 sm:px-8) shadow">
-      <h2 tw="font-bold flex items-center justify-between">
+    <TableContainer>
+      <h2>
         <span>Your NFTs</span>
+
         <StyledLink to="upload">
           <FaRegPlusSquare /> <span>Upload</span>
         </StyledLink>
       </h2>
 
-      <table tw="w-full [th]:(text-sm font-normal text-gray-500) [tr]:(border-t border-background-tertiary)">
+      <StyledTable>
         <thead>
           <tr>
-            <th scope="col" align="left">
-              Public Key
-            </th>
+            <th scope="col">Issuer</th>
             <th>Last Modified</th>
-            <th scope="col" align="right">
-              Actions
-            </th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
 
@@ -75,7 +73,7 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
             <tr key={account.id}>
               <td>
                 <a
-                  tw="flex items-baseline gap-2 cursor-pointer max-w-min"
+                  tw="inline-flex items-baseline gap-2 cursor-pointer"
                   href={getConfig().explorerIssuerUrl(account.id)}
                   target="_blank"
                 >
@@ -85,7 +83,7 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
                   </span>
                 </a>
               </td>
-              <td align="center">
+              <td>
                 {new Date(account.last_modified).toLocaleTimeString(
                   navigator.language,
                   {
@@ -97,20 +95,19 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
                 )}
               </td>
               <td>
-                <div tw="flex items-center justify-end gap-4">
-                  <StyledLink
-                    to="mint"
-                    state={{ issuer: account.id, ipfshash: account.ipfshash }}
-                  >
-                    Mint
-                  </StyledLink>
-                </div>
+                <StyledLink
+                  to="mint"
+                  tw="inline"
+                  state={{ issuer: account.id, ipfshash: account.ipfshash }}
+                >
+                  Mint
+                </StyledLink>
               </td>
             </tr>
           ))}
         </tbody>
-      </table>
-    </div>
+      </StyledTable>
+    </TableContainer>
   );
 };
 

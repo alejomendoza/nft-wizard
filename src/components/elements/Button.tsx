@@ -25,15 +25,20 @@ const sizeStyles = Object.freeze({
   xl: tw`px-10 py-4 text-lg`,
 });
 
-const ButtonBase = styled.button<ButtonBaseProps>((props) => [
+export const primaryVariants = {
+  primary: tw`bg-primary not-disabled:(hover:(bg-primary-hover))`,
+  danger: tw`bg-error not-disabled:(hover:(bg-red-700))`,
+};
+
+export const ButtonBase = styled.button<ButtonBaseProps>((props) => [
   tw`flex justify-center items-center px-6 py-2 rounded-sm transition-all shadow`,
   tw`tracking-wide disabled:(cursor-not-allowed filter[grayscale(.5)]) `,
   props.size && sizeStyles[props.size],
 ]);
 
-const ButtonPrimary = styled(ButtonBase)((props) => [
-  tw`font-semibold text-white bg-primary not-disabled:hover:(bg-primary-hover)`,
-  props.color === 'danger' && tw`bg-error not-disabled:hover:(bg-red-700)`,
+export const ButtonPrimary = styled(ButtonBase)(() => [
+  tw`text-white`,
+  ({ color = 'primary' }) => primaryVariants[color],
 ]);
 
 const Button: FunctionComponent<ButtonProps> = forwardRef((props, ref) => {

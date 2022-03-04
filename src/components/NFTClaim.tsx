@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import albedo from '@albedo-link/intent';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 import 'twin.macro';
 
 import { walletAtom } from 'src/state/atoms';
@@ -9,6 +10,7 @@ import { handleResponse, truncateMiddle } from 'src/utils';
 import { getConfig } from 'src/utils/stellar/config';
 
 import Button from './elements/Button';
+import { StyledTable, TableContainer } from 'src/styles/TableStyles';
 
 const NFTClaim = () => {
   const { publicKey } = useRecoilValue(walletAtom);
@@ -36,17 +38,15 @@ const NFTClaim = () => {
     }
   };
   return (
-    <div>
-      <table tw="w-full table-fixed">
+    <TableContainer>
+      <h2>Claimable NFTs</h2>
+
+      <StyledTable tw="table-fixed">
         <thead>
-          <tr tw="all-child:py-4">
-            <th scope="col" align="left">
-              Code
-            </th>
+          <tr>
             <th scope="col">Issuer</th>
-            <th scope="col" align="right">
-              Actions
-            </th>
+            <th scope="col">Code</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -54,11 +54,27 @@ const NFTClaim = () => {
             const [asset, issuer] = cb.asset.split(':');
 
             return (
-              <tr>
+              <tr key={cb.id}>
+                <td>
+                  <a
+                    tw="inline-flex items-baseline gap-2 cursor-pointer"
+                    href={getConfig().explorerIssuerUrl(issuer)}
+                    target="_blank"
+                  >
+                    <span>{truncateMiddle(issuer, 8)}</span>
+                    <span tw="text-sm">
+                      <FaExternalLinkAlt />
+                    </span>
+                  </a>
+                </td>
+
                 <td>{asset}</td>
-                <td align="center">{truncateMiddle(issuer, 8)}</td>
-                <td align="right">
-                  <Button size="sm" onClick={() => handleClaim(cb.id)}>
+
+                <td>
+                  <Button
+                    tw="inline px-4 py-1"
+                    onClick={() => handleClaim(cb.id)}
+                  >
                     Claim
                   </Button>
                 </td>
@@ -66,8 +82,8 @@ const NFTClaim = () => {
             );
           })}
         </tbody>
-      </table>
-    </div>
+      </StyledTable>
+    </TableContainer>
   );
 };
 
