@@ -1,4 +1,3 @@
-import { getMetadata, handleResponse } from 'src/utils';
 import {
   TransactionBuilder,
   Memo,
@@ -9,6 +8,9 @@ import {
   Asset,
   Keypair,
 } from 'stellar-base';
+
+import { AccountRecord, ClaimRecord, Collection } from 'src/types';
+import { getMetadata, handleResponse } from 'src/utils';
 import { getConfig } from './config';
 
 export const submitTransaction = async (xdr: string) => {
@@ -21,13 +23,15 @@ export const submitTransaction = async (xdr: string) => {
   }).then(handleResponse);
 };
 
-export const getAccount = async (publicKey: string) => {
+export const getAccount = async (publicKey: string): Promise<AccountRecord> => {
   return await fetch(getConfig().horizonUrl + `/accounts/${publicKey}`).then(
     handleResponse
   );
 };
 
-export const getSponsoredAccounts = async (sponsor: string) => {
+export const getSponsoredAccounts = async (
+  sponsor: string
+): Promise<Collection<AccountRecord>> => {
   return await fetch(
     getConfig().horizonUrl + `/accounts/?sponsor=${sponsor}`
   ).then(handleResponse);
@@ -36,7 +40,7 @@ export const getSponsoredAccounts = async (sponsor: string) => {
 export const getSponsoredClaimableBalances = async (
   sponsor: string,
   claimant: string
-) => {
+): Promise<Collection<ClaimRecord>> => {
   return await fetch(
     getConfig().horizonUrl +
       `/claimable_balances/?sponsor=${sponsor}&claimant=${claimant}`

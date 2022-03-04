@@ -52,6 +52,8 @@ const NFTClaim = () => {
     }
   };
 
+  const claimableBalances = claimsQuery.data;
+
   return (
     <div tw="space-y-4">
       {error && <ErrorDisplay error={error} />}
@@ -68,39 +70,41 @@ const NFTClaim = () => {
             </tr>
           </thead>
           <tbody>
-            {claimsQuery.data.map((cb: any) => {
-              const [asset, issuer] = cb.asset.split(':');
+            {claimableBalances &&
+              claimableBalances.length > 0 &&
+              claimableBalances.map((cb) => {
+                const [asset, issuer] = cb.asset.split(':');
 
-              return (
-                <tr key={cb.id}>
-                  <td>
-                    <a
-                      tw="inline-flex items-baseline gap-2 cursor-pointer"
-                      href={getConfig().explorerIssuerUrl(issuer)}
-                      target="_blank"
-                    >
-                      <span>{truncateMiddle(issuer, 8)}</span>
-                      <span tw="text-sm">
-                        <FaExternalLinkAlt />
-                      </span>
-                    </a>
-                  </td>
+                return (
+                  <tr key={cb.id}>
+                    <td>
+                      <a
+                        tw="inline-flex items-baseline gap-2 cursor-pointer"
+                        href={getConfig().explorerIssuerUrl(issuer)}
+                        target="_blank"
+                      >
+                        <span>{truncateMiddle(issuer, 8)}</span>
+                        <span tw="text-sm">
+                          <FaExternalLinkAlt />
+                        </span>
+                      </a>
+                    </td>
 
-                  <td>{asset}</td>
+                    <td>{asset}</td>
 
-                  <td>
-                    <Button
-                      tw="inline-flex px-4 py-1"
-                      onClick={() => handleClaim(cb.id)}
-                      disabled={!!claimId}
-                      isLoading={claimId === cb.id}
-                    >
-                      Claim
-                    </Button>
-                  </td>
-                </tr>
-              );
-            })}
+                    <td>
+                      <Button
+                        tw="inline-flex px-4 py-1"
+                        onClick={() => handleClaim(cb.id)}
+                        disabled={!!claimId}
+                        isLoading={claimId === cb.id}
+                      >
+                        Claim
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </StyledTable>
       </TableContainer>

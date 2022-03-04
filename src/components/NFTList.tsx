@@ -34,20 +34,16 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
       suspense: true,
       select: (data) =>
         data._embedded.records
-          .filter(({ data: { ipfshash } }: any) => !!ipfshash)
-          .map(({ id, last_modified_time, data: { ipfshash } }: any) => ({
+          .filter(({ data: { ipfshash } }) => !!ipfshash)
+          .map(({ id, last_modified_time, data: { ipfshash } }) => ({
             id,
             ipfshash: Buffer.from(ipfshash || '', 'base64').toString(),
             last_modified: last_modified_time,
-          })) as { id: string; ipfshash: string; last_modified: string }[],
+          })),
     }
   );
 
   const sponsoredAccounts = sponsoredQuery.data;
-
-  if (!sponsoredAccounts || !(sponsoredAccounts.length > 0)) {
-    return <p>No accounts found.</p>;
-  }
 
   return (
     <TableContainer>
@@ -69,42 +65,44 @@ const SponsoredAccounts = ({ publicKey }: { publicKey: string }) => {
         </thead>
 
         <tbody>
-          {sponsoredAccounts.map((account) => (
-            <tr key={account.id}>
-              <td>
-                <a
-                  tw="inline-flex items-baseline gap-2 cursor-pointer"
-                  href={getConfig().explorerIssuerUrl(account.id)}
-                  target="_blank"
-                >
-                  <span>{truncateMiddle(account.id, 8)}</span>
-                  <span tw="text-sm">
-                    <FaExternalLinkAlt />
-                  </span>
-                </a>
-              </td>
-              <td>
-                {new Date(account.last_modified).toLocaleTimeString(
-                  navigator.language,
-                  {
-                    month: 'numeric',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                  }
-                )}
-              </td>
-              <td>
-                <StyledLink
-                  to="mint"
-                  tw="inline"
-                  state={{ issuer: account.id, ipfshash: account.ipfshash }}
-                >
-                  Mint
-                </StyledLink>
-              </td>
-            </tr>
-          ))}
+          {sponsoredAccounts &&
+            sponsoredAccounts.length > 0 &&
+            sponsoredAccounts.map((account) => (
+              <tr key={account.id}>
+                <td>
+                  <a
+                    tw="inline-flex items-baseline gap-2 cursor-pointer"
+                    href={getConfig().explorerIssuerUrl(account.id)}
+                    target="_blank"
+                  >
+                    <span>{truncateMiddle(account.id, 8)}</span>
+                    <span tw="text-sm">
+                      <FaExternalLinkAlt />
+                    </span>
+                  </a>
+                </td>
+                <td>
+                  {new Date(account.last_modified).toLocaleTimeString(
+                    navigator.language,
+                    {
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                    }
+                  )}
+                </td>
+                <td>
+                  <StyledLink
+                    to="mint"
+                    tw="inline"
+                    state={{ issuer: account.id, ipfshash: account.ipfshash }}
+                  >
+                    Mint
+                  </StyledLink>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </StyledTable>
     </TableContainer>
