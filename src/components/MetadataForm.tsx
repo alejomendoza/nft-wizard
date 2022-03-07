@@ -4,13 +4,11 @@ import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 import albedo from '@albedo-link/intent';
 import { Keypair } from 'stellar-base';
-import { useRecoilValue } from 'recoil';
 import { toast } from 'react-toastify';
 import tw from 'twin.macro';
 import shajs from 'sha.js';
 
 import Button from 'src/components/elements/Button';
-import { walletAtom } from 'src/state/atoms';
 import { createNFT, submitTransaction } from 'src/utils/stellar';
 import {
   hashFile,
@@ -21,6 +19,7 @@ import {
 import { getConfig } from 'src/utils/stellar/config';
 import ErrorDisplay from 'src/components/elements/ErrorDisplay';
 import FileUpload from './FileUpload';
+import useWallet from 'src/hooks/useWallet';
 
 type FormData = {
   name: string;
@@ -44,7 +43,7 @@ const MetadataForm = () => {
     defaultValues: { name: '', code: '', description: '', file: null },
   });
 
-  const { publicKey } = useRecoilValue(walletAtom);
+  const { publicKey, signTransaction } = useWallet();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
@@ -87,11 +86,8 @@ const MetadataForm = () => {
         metadataCid
       );
 
-      const { signed_envelope_xdr } = await albedo.tx({
-        xdr,
-        network: getConfig().network,
-      });
-      await submitTransaction(signed_envelope_xdr);
+      const signedXdr = await signTransaction(xdr);
+      await submitTransaction(signedXdr);
 
       queryClient.invalidateQueries('sponsored');
       toast.success('Successfully uploaded NFT.');

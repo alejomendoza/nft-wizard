@@ -1,4 +1,5 @@
-import { atom, RecoilState, DefaultValue, selector } from 'recoil';
+import { atom, DefaultValue, selector } from 'recoil';
+import { Networks } from 'stellar-base';
 
 const localStorageEffect =
   (key: string) =>
@@ -34,12 +35,14 @@ const localStorageEffect =
     };
   };
 
-export const walletAtom = atom({
+export const walletAtom = atom<{
+  publicKey: string;
+  network: Networks;
+  selectedWallet?: 'albedo' | 'freighter';
+}>({
   key: 'wallet',
-  default: { publicKey: '' },
+  default: { publicKey: '', network: Networks.TESTNET },
   effects_UNSTABLE: [localStorageEffect('nw:wallet')],
 });
-
-export const fileHash = selector({ key: 'fileHash', get: ({ get }) => {} });
 
 export const darkModeAtom = atom<boolean>({ key: 'darkMode', default: false });

@@ -49,7 +49,7 @@ const Button: FunctionComponent<ButtonProps> = forwardRef((props, ref) => {
       {isLoading ? (
         <Spinner tw="text-lg mr-2" />
       ) : leftIcon ? (
-        <span tw="svg:(mr-2)">{leftIcon()}</span>
+        <span tw="mr-2">{leftIcon()}</span>
       ) : null}
 
       <span tw="pointer-events-none">

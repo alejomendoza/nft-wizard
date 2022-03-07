@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { useRecoilValue } from 'recoil';
 import { toast } from 'react-toastify';
-import albedo from '@albedo-link/intent';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import 'twin.macro';
 
-import { walletAtom } from 'src/state/atoms';
-import { getSponsoredClaimableBalances } from 'src/utils/stellar';
+import useWallet from 'src/hooks/useWallet';
+import {
+  getSponsoredClaimableBalances,
+  submitTransaction,
+} from 'src/utils/stellar';
 import { handleResponse, institutionAccount, truncateMiddle } from 'src/utils';
 import { getConfig } from 'src/utils/stellar/config';
 
@@ -18,7 +19,7 @@ import ErrorDisplay from './elements/ErrorDisplay';
 const NFTClaim = () => {
   const queryClient = useQueryClient();
 
-  const { publicKey } = useRecoilValue(walletAtom);
+  const { publicKey, signTransaction } = useWallet();
   const [claimId, setClaimId] = useState('');
   const [error, setError] = useState(null);
 
@@ -35,12 +36,8 @@ const NFTClaim = () => {
         `https://claim-nft-endpoint-quhceeea5030.runkit.sh/?student=${publicKey}&balanceId=${balanceId}`
       ).then(handleResponse);
 
-      await albedo.tx({
-        xdr,
-        pubkey: publicKey,
-        network: getConfig().network,
-        submit: true,
-      });
+      const signedXdr = await signTransaction(xdr);
+      await submitTransaction(signedXdr);
 
       toast.success('Successfully claimed NFT.');
       queryClient.invalidateQueries('claimable_balances');

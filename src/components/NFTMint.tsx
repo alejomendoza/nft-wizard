@@ -1,30 +1,28 @@
 import { Suspense, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import albedo from '@albedo-link/intent';
 import { useQuery } from 'react-query';
 import { StrKey } from 'stellar-base';
 import { toast } from 'react-toastify';
+import { FaLink, FaCopy, FaDownload } from 'react-icons/fa';
 
 import tw from 'twin.macro';
 
 import Button from './elements/Button';
 import { copyText, getMetadata } from 'src/utils';
-import { getConfig } from 'src/utils/stellar/config';
-import { mintNFT } from 'src/utils/stellar';
-import { walletAtom } from 'src/state/atoms';
-import { FaLink, FaCopy, FaDownload } from 'react-icons/fa';
+import { mintNFT, submitTransaction } from 'src/utils/stellar';
 import { cloudflareGateway } from 'src/utils';
 
 import Spinner from './icons/Spinner';
 import ErrorDisplay from './elements/ErrorDisplay';
+import useWallet from 'src/hooks/useWallet';
 
 const NFTMint = () => {
   const {
     state: { issuer, ipfshash },
   } = useLocation() as any;
 
-  const { publicKey } = useRecoilValue(walletAtom);
+  const { publicKey, signTransaction } = useWallet();
 
   const [destination, setDestination] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -35,12 +33,8 @@ const NFTMint = () => {
 
     try {
       const xdr = await mintNFT(publicKey, issuer, ipfshash, destination);
-      await albedo.tx({
-        xdr,
-        network: getConfig().network,
-        submit: true,
-        pubkey: publicKey,
-      });
+      const signedXdr = await signTransaction(xdr);
+      await submitTransaction(signedXdr);
 
       toast.success('Successfully minted.');
     } catch (e) {

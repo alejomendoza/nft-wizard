@@ -1,18 +1,16 @@
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { useRecoilValue } from 'recoil';
 import { ReactQueryDevtools } from 'react-query/devtools';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import { walletAtom } from './state/atoms';
-
 import Login from 'src/components/Login';
 import Dashboard from 'src/components/Dashboard';
 import Layout from 'src/components/Layout';
+import useWallet from './hooks/useWallet';
 
 function App() {
-  const { publicKey } = useRecoilValue(walletAtom);
+  const { publicKey } = useWallet();
 
   return (
     <div>

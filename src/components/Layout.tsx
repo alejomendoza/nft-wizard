@@ -1,9 +1,10 @@
 import { NavLink as Link, Outlet } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import tw, { styled } from 'twin.macro';
 import { FaSun, FaMoon } from 'react-icons/fa';
 
-import { darkModeAtom, walletAtom } from 'src/state/atoms';
+import useWallet from 'src/hooks/useWallet';
+import { darkModeAtom } from 'src/state/atoms';
 
 import StellarLogoFull from './icons/StellarLogoFull';
 import { WalletMenu } from './Wallet';
@@ -47,7 +48,7 @@ const Layout = () => {
 };
 
 const Nav = () => {
-  const { publicKey } = useRecoilValue(walletAtom);
+  const { publicKey } = useWallet();
 
   if (!publicKey) return null;
 

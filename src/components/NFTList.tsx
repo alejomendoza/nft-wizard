@@ -1,21 +1,19 @@
 import { Suspense } from 'react';
-import { useRecoilValue } from 'recoil';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { FaExternalLinkAlt, FaRegPlusSquare } from 'react-icons/fa';
-import 'twin.macro';
+import tw, { styled } from 'twin.macro';
 
+import useWallet from 'src/hooks/useWallet';
 import { getSponsoredAccounts } from 'src/utils/stellar';
-import { walletAtom } from 'src/state/atoms';
 import { truncateMiddle } from 'src/utils';
 
 import Spinner from './icons/Spinner';
-import tw, { styled } from 'twin.macro';
 import { getConfig } from 'src/utils/stellar/config';
 import { StyledTable, TableContainer } from 'src/styles/TableStyles';
 
 const NFTList = () => {
-  const { publicKey } = useRecoilValue(walletAtom);
+  const { publicKey } = useWallet();
 
   return (
     <div>
