@@ -1,4 +1,5 @@
-import { atom, DefaultValue, selector } from 'recoil';
+import { atom, DefaultValue } from 'recoil';
+import { WalletAdapters } from 'src/types';
 import { Networks } from 'stellar-base';
 
 const localStorageEffect =
@@ -38,7 +39,7 @@ const localStorageEffect =
 export const walletAtom = atom<{
   publicKey: string;
   network: Networks;
-  selectedWallet?: 'albedo' | 'freighter';
+  selectedWallet?: keyof WalletAdapters;
 }>({
   key: 'wallet',
   default: { publicKey: '', network: Networks.TESTNET },

@@ -1,5 +1,8 @@
-export type Wallet = {
-  publicKey: string;
+import { AdapterInterface } from 'src/utils/wallet/Adapter';
+
+export type WalletAdapters = {
+  albedo: AdapterInterface;
+  freighter: AdapterInterface;
 };
 
 export type Metadata = {
@@ -11,6 +14,12 @@ export type Metadata = {
   hash: string;
   cid: string;
   url: string;
+};
+
+export type Collection<T> = {
+  _embedded: {
+    records: T[];
+  };
 };
 
 export type AccountRecord = {
@@ -28,10 +37,4 @@ export type ClaimRecord = {
   id: string;
   last_modified_time: string;
   asset: string;
-};
-
-export type Collection<T> = {
-  _embedded: {
-    records: T[];
-  };
 };
